@@ -1164,6 +1164,7 @@
 
       activeSession.exercises.forEach((ex, exIdx) => {
         const card = document.createElement('div');
+        card.id = `exercise-card-${exIdx}`;
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-sm space-y-3";
         
         let histText = ex.history ? `Last: ${ex.history.weight} ${appState.unit} × ${ex.history.reps}` : `First time tracking`;
@@ -1183,7 +1184,8 @@
               
               <div class="flex-1 flex items-center rounded-xl px-3 py-2 border ${bgInput} transition-colors">
                 <input type="number" inputmode="decimal" 
-                  placeholder="${set.ghostW !== '' ? set.ghostW : appState.unit}" value="${set.weight}"
+                  data-ex="${exIdx}" data-set="${setIdx}" data-field="weight"
+                  placeholder="${set.ghostW !== '' ? set.ghostW : ''}" value="${set.weight}"
                   oninput="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)"
                   class="w-full bg-transparent ${txtColor} text-center focus:outline-none placeholder-slate-600">
                 <span class="text-[10px] text-slate-500 font-bold ml-1">${appState.unit}</span>
@@ -1191,7 +1193,8 @@
 
               <div class="flex-1 flex items-center rounded-xl px-3 py-2 border ${bgInput} transition-colors">
                 <input type="number" inputmode="numeric" 
-                  placeholder="${set.ghostR !== '' ? set.ghostR : 'reps'}" value="${set.reps}"
+                  data-ex="${exIdx}" data-set="${setIdx}" data-field="reps"
+                  placeholder="${set.ghostR !== '' ? set.ghostR : ''}" value="${set.reps}"
                   oninput="updateSet(${exIdx}, ${setIdx}, 'reps', this.value)"
                   class="w-full bg-transparent ${txtColor} text-center focus:outline-none placeholder-slate-600">
                 <span class="text-[10px] text-slate-500 font-bold ml-1">reps</span>
@@ -1266,6 +1269,22 @@
 
     function updateSet(exIdx, setIdx, field, val) {
       activeSession.exercises[exIdx].sets[setIdx][field] = val;
+      const ghostKey = field === 'weight' ? 'ghostW' : 'ghostR';
+      const ex = activeSession.exercises[exIdx];
+      for (let i = setIdx + 1; i < ex.sets.length; i++) {
+        if (!ex.sets[i].completed && (ex.sets[i][field] === '' || ex.sets[i][field] === undefined)) {
+          ex.sets[i][ghostKey] = val;
+        }
+      }
+      const card = document.getElementById(`exercise-card-${exIdx}`);
+      if (card) {
+        for (let i = setIdx + 1; i < ex.sets.length; i++) {
+          const input = card.querySelector(`[data-ex="${exIdx}"][data-set="${i}"][data-field="${field}"]`);
+          if (input && (ex.sets[i][field] === '' || ex.sets[i][field] === undefined)) {
+            input.placeholder = val;
+          }
+        }
+      }
     }
 
     function toggleSet(exIdx, setIdx) {
