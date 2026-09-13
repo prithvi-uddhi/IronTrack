@@ -48,7 +48,7 @@
       overflow: hidden;
     }
     .safe-pb {
-      padding-bottom: 2rem;
+      padding-bottom: calc(5.5rem + var(--sab));
     }
     .nav-safe-bottom {
       padding-bottom: max(var(--sab), 0.65rem);
@@ -74,7 +74,7 @@
     }
     @keyframes pulseAlarm {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.02); }
+      50% { opacity: 0.75; transform: scale(1.02); }
     }
     .alarm-pulsing {
       animation: pulseAlarm 0.7s ease-in-out infinite;
@@ -84,16 +84,16 @@
       100% { transform: scale(1) translateY(0); opacity: 1; }
     }
     .modal-enter {
-      animation: modalSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: modalSlideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- Centered Frosted Rest Over Alarm Modal (Replaces top banner) -->
-  <div id="modal-timer-alarm" onclick="dismissAlarm()" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
-    <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700/80 w-full max-w-xs rounded-3xl p-6 text-center space-y-5 shadow-2xl alarm-pulsing">
-      <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-3xl">
+  <!-- 1. Centered Frosted Rest Over Alarm Modal -->
+  <div id="modal-timer-alarm" onclick="dismissAlarm()" class="fixed inset-0 z-[110] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
+    <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-750 w-full max-w-xs rounded-3xl p-6 text-center space-y-5 shadow-2xl alarm-pulsing">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-3xl">
         🔔
       </div>
       <div class="space-y-1">
@@ -106,7 +106,7 @@
     </div>
   </div>
 
-  <!-- 1. First-Launch Onboarding Modal -->
+  <!-- 2. First-Launch Onboarding Modal -->
   <div id="modal-onboarding" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-3xl flex items-center justify-center p-6 hidden">
     <div class="w-full max-w-sm space-y-7 text-center modal-enter">
       <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-brand-500 to-emerald-400 flex items-center justify-center text-4xl shadow-2xl shadow-brand-500/20">
@@ -128,7 +128,7 @@
     </div>
   </div>
 
-  <!-- 2. Reusable Confirmation Modal -->
+  <!-- 3. Confirmation Dialog Modal -->
   <div id="modal-confirm" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-3xl p-6 space-y-6 shadow-2xl transform scale-95 transition-transform duration-200" id="modal-confirm-box">
       <div class="text-center space-y-2">
@@ -142,7 +142,7 @@
     </div>
   </div>
 
-  <!-- 3. Full-Screen Motivational Coach Modal -->
+  <!-- 4. Motivational Coach Modal -->
   <div id="modal-coach" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-sm text-center space-y-6 transform scale-95 transition-transform duration-200" id="modal-coach-box">
       <div id="coach-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border bg-brand-500/10 border-brand-500/30 text-brand-400">
@@ -162,7 +162,7 @@
     </div>
   </div>
 
-  <!-- 4. Direct-Tap Edit Timer Duration Modal -->
+  <!-- 5. Edit Timer Duration Modal -->
   <div id="modal-edit-timer" class="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-3xl p-6 space-y-5 shadow-2xl transform scale-95 transition-transform duration-200" id="modal-edit-timer-box">
       <div class="text-center space-y-1">
@@ -187,7 +187,7 @@
     </div>
   </div>
 
-  <!-- 5. Create Custom Split Modal -->
+  <!-- 6. Create Custom Split Modal -->
   <div id="modal-new-split" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
     <div class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 space-y-4 max-h-[85vh] flex flex-col shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -226,7 +226,7 @@
     </div>
   </div>
 
-  <!-- 6. Edit Existing Split Modal -->
+  <!-- 7. Edit Existing Split Modal -->
   <div id="modal-edit-split" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
     <div class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 space-y-4 max-h-[85vh] flex flex-col shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -265,12 +265,12 @@
     </div>
   </div>
 
-  <!-- 7. In-Session Add Exercise Modal -->
+  <!-- 8. In-Session Add Movement Modal -->
   <div id="modal-add-session-ex" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
       <div class="space-y-1 text-center">
         <h3 class="font-black text-lg text-white">Add Movement</h3>
-        <p class="text-xs text-slate-400">Append an extra exercise to today's session</p>
+        <p class="text-xs text-slate-400">Append an extra exercise to today's workout</p>
       </div>
       <div class="space-y-2">
         <input type="text" id="input-session-new-ex-name" placeholder="e.g. Cable Facepulls" 
@@ -285,7 +285,25 @@
     </div>
   </div>
 
-  <!-- 8. Finish Workout Permanent Split Update Prompt Modal -->
+  <!-- 9. Exercise 3-Dot Action Menu Bottomsheet -->
+  <div id="modal-exercise-options" onclick="closeExerciseActionMenu()" class="fixed inset-0 z-[96] bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden opacity-0 transition-opacity duration-150">
+    <div onclick="event.stopPropagation()" class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-sm rounded-t-3xl sm:rounded-3xl p-5 space-y-3 shadow-2xl">
+      <div class="text-center pb-1">
+        <h4 id="exercise-action-title" class="text-sm font-black text-white truncate px-2">Exercise Options</h4>
+        <p class="text-[11px] text-slate-400">Manage movement for today's session</p>
+      </div>
+      <div class="space-y-2 pt-1">
+        <button onclick="confirmRemoveExerciseFromSession()" class="w-full py-3.5 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white font-black text-xs uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2">
+          <span>🗑 Remove From Today's Workout</span>
+        </button>
+        <button onclick="closeExerciseActionMenu()" class="w-full py-3 rounded-2xl bg-slate-800 text-slate-300 font-bold text-xs active:scale-95 transition-all">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Finish Workout Split Sync Prompt Modal -->
   <div id="modal-split-sync-prompt" class="fixed inset-0 z-[98] bg-black/80 backdrop-blur-md flex items-center justify-center p-5 hidden">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 space-y-5 shadow-2xl text-center">
       <div class="w-14 h-14 mx-auto rounded-2xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-2xl text-brand-400">
@@ -294,7 +312,7 @@
       <div class="space-y-2">
         <h3 class="font-black text-lg text-white tracking-tight">Routine Movements Changed</h3>
         <p class="text-xs text-slate-400 leading-relaxed">
-          You added or removed movements during this workout. Would you like to update <span id="prompt-sync-split-name" class="font-bold text-slate-200">this routine</span> permanently for future sessions?
+          You added or removed movements during this workout. Would you like to update <span id="prompt-sync-split-name" class="font-bold text-slate-200">this routine</span> permanently for future workouts?
         </p>
       </div>
       <div class="space-y-2 pt-1">
@@ -358,7 +376,197 @@
     <div class="flex-1 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4" id="session-exercises"></div>
   </main>
 
+  <!-- ========================================== -->
+  <!-- 2. VIEW: LOG & CHARTS                      -->
+  <!-- ========================================== -->
+  <main id="view-log" class="flex-1 flex flex-col min-h-0 h-full w-full max-w-xl mx-auto hidden overflow-hidden">
+    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 flex-shrink-0 space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-white">Workout Log</h1>
+          <p class="text-xs text-slate-400 font-medium">History & Progressive Overload</p>
+        </div>
+        <!-- Sub-view Toggle: History vs. Charts -->
+        <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+          <button id="toggle-log-history" onclick="setLogSubView('history')" class="px-3 py-1 rounded-lg text-xs font-black transition-all bg-brand-500 text-slate-950">
+            History
+          </button>
+          <button id="toggle-log-charts" onclick="setLogSubView('charts')" class="px-3 py-1 rounded-lg text-xs font-black transition-all text-slate-400 hover:text-white">
+            Charts
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sub-panel A: Weekly Log History -->
+    <div id="log-subview-history" class="flex-1 min-h-0 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4">
+      <!-- Week Switcher Header -->
+      <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3">
+        <button onclick="shiftWeek(-1)" class="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white active:scale-90 transition-transform">
+          ‹
+        </button>
+        <div class="text-center">
+          <span id="log-week-range" class="text-xs font-black text-white block">Current Week</span>
+          <span id="log-week-stats" class="text-[10px] text-slate-400 font-medium">0 Workouts • 0 kg volume</span>
+        </div>
+        <button onclick="shiftWeek(1)" class="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white active:scale-90 transition-transform">
+          ›
+        </button>
+      </div>
+
+      <!-- Collapsible Workouts List -->
+      <div id="weekly-sessions-list" class="space-y-3"></div>
+    </div>
+
+    <!-- Sub-panel B: Progression Charts (Micro & Macro) -->
+    <div id="log-subview-charts" class="flex-1 min-h-0 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4 hidden">
+      <!-- Micro Progression: Full-Width Exercise Curve Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-sm">
+        <div class="space-y-1">
+          <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Micro Progression</span>
+          <h3 class="font-black text-base text-white">Lift Progression Curve</h3>
+          <p class="text-[11px] text-slate-400">Track top working weight over time</p>
+        </div>
+
+        <!-- Dedicated Full-Width Exercise Selector -->
+        <div>
+          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()"
+            class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-bold text-brand-400 focus:outline-none focus:border-brand-500 truncate cursor-pointer shadow-inner">
+          </select>
+        </div>
+
+        <!-- SVG Progression Curve Canvas Container -->
+        <div id="chart-svg-container" class="w-full pt-1"></div>
+      </div>
+
+      <!-- Macro Balance: Muscle Group Volume Distribution -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Macro Balance</span>
+            <h3 class="font-black text-base text-white">Muscle Group Volume</h3>
+          </div>
+          <span id="chart-total-sets-badge" class="text-[10px] font-bold text-slate-400 px-2 py-0.5 rounded-full bg-slate-950 border border-slate-800">0 Sets Logged</span>
+        </div>
+        <div id="macro-volume-bars" class="space-y-2.5"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 3. VIEW: SETTINGS                          -->
+  <!-- ========================================== -->
+  <main id="view-settings" class="flex-1 flex flex-col min-h-0 h-full w-full max-w-xl mx-auto hidden overflow-hidden">
+    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 flex-shrink-0">
+      <h1 class="text-xl font-black tracking-tight text-white">Locker Settings</h1>
+      <p class="text-xs text-slate-400 font-medium">Preferences, splits & backup</p>
+    </header>
+
+    <div class="flex-1 min-h-0 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4">
+      <!-- Profile Name & Weight Unit -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3">
+        <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Profile & Units</h4>
+        <div class="space-y-3">
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Your Name</label>
+            <div class="flex gap-2">
+              <input type="text" id="settings-name-input" placeholder="Your Name" 
+                class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-brand-500">
+              <button onclick="updateNickname()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-400 font-bold text-xs active:scale-95">Save</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-xs font-bold text-white">Weight Unit</span>
+            <div class="flex bg-slate-950 border border-slate-800 rounded-xl p-1 text-xs">
+              <button id="btn-unit-kg" onclick="setWeightUnit('kg')" class="px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all">kg</button>
+              <button id="btn-unit-lbs" onclick="setWeightUnit('lbs')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all">lbs</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rest Timer & Banter Preferences -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3">
+        <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Training Assistant</h4>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-white block">Default Rest Timer</span>
+            <span class="text-[10px] text-slate-400">Target countdown between sets</span>
+          </div>
+          <button onclick="openTimerModal()" class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-brand-400 font-black text-xs">
+            Edit Duration
+          </button>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-800/60 pt-3">
+          <div>
+            <span class="text-xs font-bold text-white block">Motivational Coach</span>
+            <span class="text-[10px] text-slate-400">PR celebrations & final set alerts</span>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="toggle-banter" onchange="toggleBanterSetting(this.checked)" class="sr-only peer" checked>
+            <div class="w-10 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Manage Splits -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Manage Workout Splits</h4>
+          <button onclick="openNewSplitModal()" class="text-xs font-bold text-brand-400">+ New Split</button>
+        </div>
+        <div id="settings-routines-list" class="space-y-2"></div>
+      </div>
+
+      <!-- Data Export & Reset -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3">
+        <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Data & Backup</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="exportDataJSON()" class="py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-white hover:border-slate-700 active:scale-95">
+            Export JSON
+          </button>
+          <button onclick="exportDataCSV()" class="py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-white hover:border-slate-700 active:scale-95">
+            Export CSV
+          </button>
+        </div>
+        <div class="pt-1">
+          <label class="block w-full py-2.5 text-center rounded-xl bg-slate-950 border border-dashed border-slate-800 text-xs font-bold text-slate-400 hover:text-white cursor-pointer active:scale-98">
+            <span>Import Backup JSON</span>
+            <input type="file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+          </label>
+        </div>
+        <div class="pt-2 border-t border-slate-800/60 flex gap-2">
+          <button onclick="confirmClearAllData()" class="flex-1 py-2 rounded-xl bg-red-500/10 text-red-400 font-bold text-[11px] active:scale-95">
+            Clear History
+          </button>
+          <button onclick="confirmResetToOriginal()" class="flex-1 py-2 rounded-xl bg-red-500/10 text-red-400 font-bold text-[11px] active:scale-95">
+            Reset Default Splits
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- BOTTOM FIXED NAVIGATION BAR                -->
+  <!-- ========================================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800/80 backdrop-blur-xl nav-safe-bottom max-w-xl mx-auto flex items-center justify-around px-2">
+    <button id="nav-tab-workout" onclick="switchNavTab('workout')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-brand-400 active:scale-95 transition-transform">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+      <span class="text-[10px] font-black uppercase tracking-wider">Workout</span>
+    </button>
+    <button id="nav-tab-log" onclick="switchNavTab('log')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 active:scale-95 transition-transform">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+      <span class="text-[10px] font-black uppercase tracking-wider">Log</span>
+    </button>
+    <button id="nav-tab-settings" onclick="switchNavTab('settings')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 active:scale-95 transition-transform">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+      <span class="text-[10px] font-black uppercase tracking-wider">Settings</span>
+    </button>
+  </nav>
+
   <script>
+    /* Default Routine Presets */
     const DEFAULT_PRESETS = [
       {
         id: "upper_a",
@@ -443,8 +651,10 @@
     let activeSession = null;
     let wakeLock = null;
     let expandedLogCards = new Set();
+    let currentWeekOffset = 0;
+    let editingSplitIndex = null;
+    let selectedExerciseActionIndex = null;
 
-    // Robust Timer & Alarm State
     let activeTimer = {
       exIndex: null,
       targetEndTime: null,
@@ -454,54 +664,72 @@
       ringLoopInterval: null
     };
 
-    let currentWeekOffset = 0;
     let audioCtx = null;
+    let keepAliveCarrierNode = null;
+    let keepAliveGainNode = null;
 
+    // Direct iOS Silent Switch Bypass & Audio Pre-Warming
     function unlockAudioEngine() {
       try {
         if ('audioSession' in navigator) {
           navigator.audioSession.type = 'playback';
         }
         if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+          }
         }
-        if (audioCtx.state === 'suspended') {
+        if (audioCtx && audioCtx.state === 'suspended') {
           audioCtx.resume();
         }
+
+        // Start inaudible keep-alive stream so iOS WebKit doesn't sleep the engine
+        if (audioCtx && !keepAliveCarrierNode) {
+          keepAliveCarrierNode = audioCtx.createOscillator();
+          keepAliveGainNode = audioCtx.createGain();
+          keepAliveGainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime); // Inaudible to human ear
+          keepAliveCarrierNode.connect(keepAliveGainNode);
+          keepAliveGainNode.connect(audioCtx.destination);
+          keepAliveCarrierNode.start();
+        }
       } catch (e) {
-        console.warn("Audio note:", e);
+        console.warn("Audio unlock notice:", e);
       }
     }
 
+    // High-Contrast Resonant Chime
     function playBeepCadence() {
       unlockAudioEngine();
       if (!audioCtx) return;
       try {
         const now = audioCtx.currentTime;
-        
+
+        // Primary bell harmonic
         const osc1 = audioCtx.createOscillator();
         const gain1 = audioCtx.createGain();
         osc1.type = 'sine';
         osc1.frequency.setValueAtTime(880, now);
-        osc1.frequency.exponentialRampToValueAtTime(1100, now + 0.15);
-        gain1.gain.setValueAtTime(0.35, now);
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc1.frequency.exponentialRampToValueAtTime(1174, now + 0.18);
+        gain1.gain.setValueAtTime(0.45, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         osc1.connect(gain1);
         gain1.connect(audioCtx.destination);
         osc1.start(now);
-        osc1.stop(now + 0.15);
+        osc1.stop(now + 0.22);
 
+        // Secondary alert tone
         const osc2 = audioCtx.createOscillator();
         const gain2 = audioCtx.createGain();
         osc2.type = 'triangle';
         osc2.frequency.setValueAtTime(1320, now + 0.12);
-        osc2.frequency.exponentialRampToValueAtTime(1760, now + 0.32);
-        gain2.gain.setValueAtTime(0.30, now + 0.12);
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc2.frequency.exponentialRampToValueAtTime(1760, now + 0.36);
+        gain2.gain.setValueAtTime(0.40, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.40);
         osc2.connect(gain2);
         gain2.connect(audioCtx.destination);
         osc2.start(now + 0.12);
-        osc2.stop(now + 0.35);
+        osc2.stop(now + 0.40);
       } catch (err) {
         console.warn("Beep audio error:", err);
       }
@@ -510,7 +738,7 @@
     function startContinuousAlarm() {
       activeTimer.isRinging = true;
       playBeepCadence();
-      
+
       if (activeTimer.ringLoopInterval) clearInterval(activeTimer.ringLoopInterval);
       activeTimer.ringLoopInterval = setInterval(() => {
         if (!activeTimer.isRinging) {
@@ -550,6 +778,15 @@
 
     function initApp() {
       loadState();
+      // Unlock audio on any first touch anywhere on screen
+      const warmUpHandler = () => {
+        unlockAudioEngine();
+        window.removeEventListener('touchstart', warmUpHandler);
+        window.removeEventListener('click', warmUpHandler);
+      };
+      window.addEventListener('touchstart', warmUpHandler, { passive: true });
+      window.addEventListener('click', warmUpHandler, { passive: true });
+
       if (!appState.userName) {
         showOnboarding();
       } else {
@@ -634,92 +871,42 @@
       }
     }
 
-    function exportDataJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `irontrack_backup_${new Date().toISOString().slice(0, 10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+    function showOnboarding() {
+      const modal = document.getElementById('modal-onboarding');
+      if (modal) modal.classList.remove('hidden');
     }
 
-    function exportDataCSV() {
-      if (!appState.logs || appState.logs.length === 0) return;
-      let csvContent = "data:text/csv;charset=utf-8,Date,Routine,Exercise,Set,Weight,Unit,Reps\n";
-      appState.logs.forEach(log => {
-        const dateStr = log.date.slice(0, 10);
-        const rName = `"${(log.routineName || '').replace(/"/g, '""')}"`;
-        log.exercises.forEach(ex => {
-          const exName = `"${(ex.name || '').replace(/"/g, '""')}"`;
-          ex.sets.forEach((set, idx) => {
-            csvContent += `${dateStr},${rName},${exName},${idx + 1},${set.weight},${appState.unit},${set.reps}\n`;
-          });
-        });
-      });
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `irontrack_workouts_${new Date().toISOString().slice(0, 10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
-
-    function importDataJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (imported && typeof imported === 'object') {
-            if (imported.presets) appState.presets = imported.presets;
-            if (imported.logs) appState.logs = imported.logs;
-            if (imported.userName) appState.userName = imported.userName;
-            if (imported.unit) appState.unit = imported.unit;
-            if (imported.defaultTimer) appState.defaultTimer = imported.defaultTimer;
-            if (imported.banterEnabled !== undefined) appState.banterEnabled = imported.banterEnabled;
-            saveState();
-            updateGreetings();
-            renderDashboard();
-            renderSettingsView();
-            renderLogView();
-          }
-        } catch (err) {
-          console.error("Backup JSON parse failed", err);
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
-
-    function toggleBanterSetting(enabled) {
-      appState.banterEnabled = enabled;
+    function submitOnboarding() {
+      const input = document.getElementById('input-onboarding-name');
+      const name = input ? input.value.trim() : "";
+      appState.userName = name || "Champ";
       saveState();
+      const modal = document.getElementById('modal-onboarding');
+      if (modal) modal.classList.add('hidden');
+      updateGreetings();
+      renderDashboard();
     }
 
     function switchNavTab(tab) {
-      if (activeSession && tab !== "workout") {
-        handleBackClick(() => {
-          proceedSwitchTab(tab);
-        });
-        return;
+      if (activeSession && tab !== 'workout') {
+        // Allow switching tabs while maintaining background workout session
       }
-      proceedSwitchTab(tab);
-    }
-
-    function proceedSwitchTab(tab) {
       activeNavTab = tab;
       
-      document.getElementById('view-dashboard').classList.toggle('hidden', tab !== 'workout' || activeSession !== null);
-      document.getElementById('view-session').classList.toggle('hidden', tab !== 'workout' || activeSession === null);
-      document.getElementById('view-log').classList.toggle('hidden', tab !== 'log');
-      document.getElementById('view-settings').classList.toggle('hidden', tab !== 'settings');
+      const vDash = document.getElementById('view-dashboard');
+      const vSess = document.getElementById('view-session');
+      const vLog = document.getElementById('view-log');
+      const vSett = document.getElementById('view-settings');
+
+      if (vDash) vDash.classList.add('hidden');
+      if (vSess) vSess.classList.add('hidden');
+      if (vLog) vLog.classList.add('hidden');
+      if (vSett) vSett.classList.add('hidden');
 
       const tabs = ['workout', 'log', 'settings'];
       tabs.forEach(t => {
         const btn = document.getElementById(`nav-tab-${t}`);
+        if (!btn) return;
         if (t === tab) {
           btn.className = "flex-1 py-1.5 flex flex-col items-center gap-1 text-brand-400 active:scale-95 transition-transform";
         } else {
@@ -727,580 +914,387 @@
         }
       });
 
-      if (tab === 'log') {
+      if (tab === 'workout') {
+        if (activeSession) {
+          if (vSess) vSess.classList.remove('hidden');
+        } else {
+          if (vDash) vDash.classList.remove('hidden');
+          renderDashboard();
+        }
+      } else if (tab === 'log') {
+        if (vLog) vLog.classList.remove('hidden');
         renderLogView();
       } else if (tab === 'settings') {
+        if (vSett) vSett.classList.remove('hidden');
         renderSettingsView();
-      } else if (tab === 'workout' && !activeSession) {
-        renderDashboard();
       }
     }
-
-    function showOnboarding() {
-      const el = document.getElementById('modal-onboarding');
-      el.classList.remove('hidden');
-      setTimeout(() => document.getElementById('input-onboarding-name').focus(), 250);
-    }
-
-    function submitOnboarding() {
-      const name = document.getElementById('input-onboarding-name').value.trim();
-      if (!name) return;
-      appState.userName = name;
-      saveState();
-      document.getElementById('modal-onboarding').classList.add('hidden');
-      updateGreetings();
-      renderDashboard();
-    }
-
-    let confirmCallback = null;
-    function showConfirm(title, desc, onYes) {
-      document.getElementById('confirm-title').innerText = title;
-      document.getElementById('confirm-desc').innerText = desc;
-      confirmCallback = onYes;
-      
-      const modal = document.getElementById('modal-confirm');
-      const box = document.getElementById('modal-confirm-box');
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-    }
-
-    document.getElementById('btn-confirm-no').addEventListener('click', hideConfirm);
-    document.getElementById('btn-confirm-yes').addEventListener('click', () => {
-      if (confirmCallback) confirmCallback();
-      hideConfirm();
-    });
-
-    function hideConfirm() {
-      const modal = document.getElementById('modal-confirm');
-      const box = document.getElementById('modal-confirm-box');
-      modal.classList.add('opacity-0');
-      box.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-      confirmCallback = null;
-    }
-
-    function showCoachModal(pillText, icon, headline, message, actionText, pillStyle, btnStyle) {
-      if (appState.banterEnabled === false) return;
-
-      const modal = document.getElementById('modal-coach');
-      const box = document.getElementById('modal-coach-box');
-      const pill = document.getElementById('coach-pill');
-      const pillLabel = document.getElementById('coach-pill-text');
-      const iconEl = document.getElementById('coach-icon');
-      const headlineEl = document.getElementById('coach-headline');
-      const messageEl = document.getElementById('coach-message');
-      const actionBtn = document.getElementById('btn-coach-action');
-
-      pillLabel.innerText = pillText;
-      pill.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border ${pillStyle}`;
-      iconEl.innerText = icon;
-      headlineEl.innerText = headline;
-      messageEl.innerText = message;
-      actionBtn.innerText = actionText;
-      actionBtn.className = `w-full py-4 rounded-2xl active:scale-95 font-black text-sm tracking-wider uppercase transition-all shadow-xl ${btnStyle}`;
-
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-    }
-
-    function dismissCoachModal() {
-      const modal = document.getElementById('modal-coach');
-      const box = document.getElementById('modal-coach-box');
-      modal.classList.add('opacity-0');
-      box.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    async function acquireWakeLock() {
-      if ('wakeLock' in navigator) {
-        try {
-          wakeLock = await navigator.wakeLock.request('screen');
-          wakeLock.addEventListener('release', () => { wakeLock = null; });
-        } catch (err) {}
-      }
-    }
-    
-    function releaseWakeLock() {
-      if (wakeLock !== null) {
-        wakeLock.release().then(() => { wakeLock = null; }).catch(() => {});
-      }
-    }
-
-    document.addEventListener('visibilitychange', async () => {
-      if (wakeLock !== null && document.visibilityState === 'visible' && activeSession) {
-        await acquireWakeLock();
-      }
-    });
 
     function renderDashboard() {
       const container = document.getElementById('dashboard-routines');
       const countBadge = document.getElementById('split-count-badge');
-      container.innerHTML = '';
-      countBadge.innerText = `${appState.presets.length} available`;
+      if (!container) return;
 
-      if (appState.presets.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-12 px-6 rounded-3xl bg-slate-900 border border-dashed border-slate-800 text-center space-y-3">
-            <span class="text-3xl">📋</span>
-            <h4 class="font-black text-white text-base">No Splits Available</h4>
-            <p class="text-xs text-slate-400 max-w-xs mx-auto">Tap "+ New Split" to add your favorite split.</p>
-          </div>
-        `;
-        return;
-      }
-
-      appState.presets.forEach(p => {
-        const subtitle = p.subtitle || p.target || (p.exercises && p.exercises.length > 0 ? p.exercises.slice(0, 3).map(e => e.target || e.name).join(' / ') : 'Tap to start session');
-        const exerciseCountText = `${p.exercises.length} EXERCISES`;
-
-        const tile = document.createElement('div');
-        tile.onclick = () => startSession(p);
-        tile.className = `p-3.5 sm:p-5 rounded-3xl bg-gradient-to-br ${p.color || 'from-slate-900 to-slate-950'} border ${p.border || 'border-slate-800'} flex flex-col justify-between text-left min-h-[145px] sm:min-h-[155px] relative overflow-hidden group shadow-lg active:scale-[0.98] transition-all cursor-pointer`;
-        tile.innerHTML = `
-          <div class="flex items-start justify-between w-full">
-            <span class="text-2xl sm:text-3xl drop-shadow-md">${p.icon || '🏋️'}</span>
-            <div class="flex items-center gap-1.5">
-              <span class="text-[9px] sm:text-[11px] font-black uppercase tracking-wider px-2 sm:px-2.5 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-slate-200 flex-shrink-0">
-                ${exerciseCountText}
-              </span>
-              <button onclick="event.stopPropagation(); openEditSplitModal('${p.id}')" title="Edit Split Movements" class="p-1 sm:p-1.5 rounded-full bg-slate-950/80 border border-slate-800 text-slate-400 hover:text-brand-400 active:scale-90 transition-transform">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="space-y-1 mt-2">
-            <h3 class="font-black text-white text-sm sm:text-base leading-snug tracking-tight">${p.name}</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400 font-medium leading-snug break-words">${subtitle}</p>
-          </div>
-        `;
-        container.appendChild(tile);
-      });
-    }
-
-    function getHistory(exerciseName) {
-      for (let i = appState.logs.length - 1; i >= 0; i--) {
-        const ex = appState.logs[i].exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
-        if (ex && ex.sets.length > 0) {
-          let best = ex.sets[0];
-          ex.sets.forEach(s => {
-            if ((parseFloat(s.weight)*parseFloat(s.reps)) > (parseFloat(best.weight)*parseFloat(best.reps))) {
-              best = s;
-            }
-          });
-          return {
-            bestSet: best,
-            totalSetsLogged: ex.sets.length,
-            lastSet: ex.sets[ex.sets.length - 1]
-          };
-        }
-      }
-      return null;
-    }
-
-    function startSession(preset) {
-      unlockAudioEngine();
-      activeSession = {
-        routineId: preset.id,
-        name: preset.name,
-        exercises: preset.exercises.map(ex => {
-          const hist = getHistory(ex.name);
-          const baseW = hist ? hist.bestSet.weight : '';
-          const baseR = hist ? hist.bestSet.reps : '';
-          
-          const initialSetCount = hist ? Math.min(Math.max(hist.totalSetsLogged, 2), 6) : 3;
-          const initialSets = [];
-          for (let s = 0; s < initialSetCount; s++) {
-            initialSets.push({ weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false });
-          }
-
-          return {
-            name: ex.name,
-            target: ex.target || 'General',
-            history: hist ? hist.bestSet : null,
-            sets: initialSets
-          };
-        })
-      };
-
-      document.getElementById('session-title').innerText = preset.name;
-      document.getElementById('session-subtitle').innerText = `${activeSession.exercises.length} Movements Ready`;
-      
-      acquireWakeLock();
-      
-      document.getElementById('view-dashboard').classList.add('hidden');
-      document.getElementById('view-session').classList.remove('hidden');
-      window.scrollTo(0,0);
-      
-      renderSession();
-    }
-
-    function handleBackClick(onExitConfirmed) {
-      if (!activeSession) {
-        if (onExitConfirmed) onExitConfirmed();
-        return;
-      }
-
-      let completedSets = 0;
-      activeSession.exercises.forEach(ex => {
-        completedSets += ex.sets.filter(s => s.completed).length;
-      });
-
-      if (completedSets === 0) {
-        exitSession();
-        if (onExitConfirmed) onExitConfirmed();
-      } else {
-        showConfirm("Discard Session?", "You have recorded sets. Unsaved progress will be lost.", () => {
-          exitSession();
-          if (onExitConfirmed) onExitConfirmed();
-        });
-      }
-    }
-
-    function exitSession() {
-      dismissAlarm();
-      activeSession = null;
-      releaseWakeLock();
-      proceedSwitchTab(activeNavTab);
-    }
-
-    function finishSession() {
-      dismissAlarm();
-      const validExercises = activeSession.exercises.map(ex => {
-        return {
-          name: ex.name,
-          target: ex.target || 'General',
-          sets: ex.sets.filter(s => s.completed).map(s => ({ weight: s.weight, reps: s.reps }))
-        };
-      }).filter(ex => ex.sets.length > 0);
-
-      if (validExercises.length === 0) {
-        showConfirm("Empty Session", "No sets logged yet. Exit?", exitSession);
-        return;
-      }
-
-      // Check if movements were added or removed compared to the original split preset
-      const originalPreset = appState.presets.find(p => p.id === activeSession.routineId);
-      if (originalPreset) {
-        const origNames = originalPreset.exercises.map(e => e.name.trim().toLowerCase());
-        const currentNames = activeSession.exercises.map(e => e.name.trim().toLowerCase());
-        const hasDifferences = origNames.length !== currentNames.length || !origNames.every((n, i) => n === currentNames[i]);
-
-        if (hasDifferences) {
-          document.getElementById('prompt-sync-split-name').innerText = `"${originalPreset.name}"`;
-          const modal = document.getElementById('modal-split-sync-prompt');
-          modal.classList.remove('hidden');
-          return;
-        }
-      }
-
-      finalizeSaveSession(validExercises);
-    }
-
-    function resolveSplitSync(updatePermanently) {
-      document.getElementById('modal-split-sync-prompt').classList.add('hidden');
-      if (updatePermanently && activeSession) {
-        const originalPreset = appState.presets.find(p => p.id === activeSession.routineId);
-        if (originalPreset) {
-          originalPreset.exercises = activeSession.exercises.map(e => ({
-            name: e.name,
-            target: e.target || 'General'
-          }));
-          saveState();
-          renderDashboard();
-          if (activeNavTab === 'settings') renderSettingsView();
-        }
-      }
-
-      const validExercises = activeSession.exercises.map(ex => {
-        return {
-          name: ex.name,
-          target: ex.target || 'General',
-          sets: ex.sets.filter(s => s.completed).map(s => ({ weight: s.weight, reps: s.reps }))
-        };
-      }).filter(ex => ex.sets.length > 0);
-
-      finalizeSaveSession(validExercises);
-    }
-
-    function finalizeSaveSession(validExercises) {
-      appState.logs.push({
-        id: 'log_' + Date.now(),
-        date: new Date().toISOString(),
-        routineId: activeSession.routineId,
-        routineName: activeSession.name,
-        exercises: validExercises
-      });
-      saveState();
-
-      exitSession();
-      showCoachModal(
-        "WORKOUT COMPLETE",
-        "🏆",
-        "SESSION DESTROYED!",
-        "Every single rep was an investment in strength. Hydrate, eat your protein, and rest up.",
-        "View Workout Log →",
-        "bg-brand-500/10 border-brand-500/30 text-brand-400",
-        "bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-brand-500/25"
-      );
-    }
-
-    function renderSession() {
-      const container = document.getElementById('session-exercises');
+      if (countBadge) countBadge.innerText = `${appState.presets.length} available`;
       container.innerHTML = '';
 
-      activeSession.exercises.forEach((ex, exIdx) => {
+      appState.presets.forEach((preset, idx) => {
         const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-sm space-y-3 relative";
+        card.className = `relative overflow-hidden rounded-3xl bg-gradient-to-b ${preset.color || 'from-slate-900 to-slate-950'} border ${preset.border || 'border-slate-800'} p-4 flex flex-col justify-between min-h-[160px] shadow-lg group`;
         
-        let histText = ex.history ? `Last: ${ex.history.weight} ${appState.unit} × ${ex.history.reps}` : `First time tracking`;
-        
-        const completedCount = ex.sets.filter(s => s.completed).length;
-        const totalCount = ex.sets.length;
-
-        let setsHTML = '';
-        ex.sets.forEach((set, setIdx) => {
-          const isDone = set.completed;
-          const bgInput = isDone ? 'bg-brand-500/10 border-brand-500/30' : 'bg-slate-950 border-slate-800 focus-within:border-brand-500';
-          const txtColor = isDone ? 'text-brand-400 font-black' : 'text-white font-black';
-          
-          setsHTML += `
-            <div class="flex items-center gap-2">
-              <span class="w-6 text-center text-xs font-black ${isDone ? 'text-brand-400' : 'text-slate-500'}">#${setIdx+1}</span>
-              
-              <div class="flex-1 flex items-center rounded-xl px-3 py-2 border ${bgInput} transition-colors">
-                <input type="number" inputmode="decimal" 
-                  placeholder="${set.ghostW !== '' ? set.ghostW : appState.unit}" value="${set.weight}"
-                  oninput="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)"
-                  class="w-full bg-transparent ${txtColor} text-center focus:outline-none placeholder-slate-600">
-                <span class="text-[10px] text-slate-500 font-bold ml-1">${appState.unit}</span>
-              </div>
-
-              <div class="flex-1 flex items-center rounded-xl px-3 py-2 border ${bgInput} transition-colors">
-                <input type="number" inputmode="numeric" 
-                  placeholder="${set.ghostR !== '' ? set.ghostR : 'reps'}" value="${set.reps}"
-                  oninput="updateSet(${exIdx}, ${setIdx}, 'reps', this.value)"
-                  class="w-full bg-transparent ${txtColor} text-center focus:outline-none placeholder-slate-600">
-                <span class="text-[10px] text-slate-500 font-bold ml-1">reps</span>
-              </div>
-
-              <button onclick="toggleSet(${exIdx}, ${setIdx})" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 flex-shrink-0 ${isDone ? 'bg-brand-500 text-slate-950 shadow-md shadow-brand-500/20' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-              </button>
-            </div>
-          `;
-        });
-
-        const isTimerActiveHere = activeTimer.exIndex === exIdx && activeTimer.intervalId !== null;
-        const isRingingHere = activeTimer.isRinging && activeTimer.exIndex === exIdx;
-
-        let timerDisplayHTML = '';
-        if (isRingingHere) {
-          timerDisplayHTML = `
-            <button onclick="dismissAlarm()" class="alarm-pulsing flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-500 text-white font-black text-xs shadow-lg shadow-red-500/40 active:scale-95 transition-transform">
-              <span>🔔 TIME UP — TAP TO STOP</span>
-            </button>
-          `;
-        } else {
-          const displayTime = isTimerActiveHere ? formatTime(activeTimer.remaining) : `${appState.defaultTimer}s`;
-          const timerIcon = isTimerActiveHere ? '■' : '▶';
-          const timerClass = isTimerActiveHere ? 'text-brand-400 border-brand-500/30 bg-brand-500/10' : 'text-slate-300 border-slate-800 bg-slate-950 hover:border-slate-700';
-
-          timerDisplayHTML = `
-            <div class="flex items-center gap-1.5 border ${timerClass} rounded-full px-2.5 py-1 transition-colors">
-              <span class="text-xs">⏱️</span>
-              <span onclick="${isTimerActiveHere ? '' : 'openTimerModal()'}" class="text-xs font-black font-mono tracking-tight cursor-pointer px-1 text-slate-200" title="Tap to change rest duration" id="timer-display-${exIdx}">${displayTime}</span>
-              <button onclick="toggleTimer(${exIdx})" class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[9px] text-brand-400 active:scale-90 transition-transform">
-                ${timerIcon}
-              </button>
-            </div>
-          `;
-        }
-
-        const safeExName = ex.name.replace(/'/g, "\\'");
         card.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div class="flex-1 pr-2">
-              <div class="flex items-center gap-2">
-                <h3 class="font-black text-base text-white tracking-tight">${ex.name}</h3>
-                <button onclick="removeExerciseFromSession(${exIdx}, '${safeExName}')" title="Remove movement from today's workout" class="text-slate-600 hover:text-red-400 text-xs px-1 py-0.5 rounded transition-colors">
-                  ✕
-                </button>
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-center text-xl shadow-inner">
+                ${preset.icon || '🏋️'}
               </div>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="text-[9px] uppercase font-bold text-brand-400 tracking-wider bg-brand-500/10 px-1.5 py-0.5 rounded">${ex.target}</span>
-                <span class="text-[10px] text-slate-500 font-medium">• ${histText}</span>
-              </div>
+              <button onclick="event.stopPropagation(); openEditSplitModal(${idx})" class="w-7 h-7 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-400 hover:text-brand-400 flex items-center justify-center text-xs active:scale-90 transition-all">
+                ✏️
+              </button>
             </div>
-            <div class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-300 flex-shrink-0">
-              <span class="text-brand-400">${completedCount}</span> / ${totalCount} SETS
-            </div>
+            <h3 class="font-black text-sm sm:text-base text-white mt-3 leading-snug">${preset.name}</h3>
+            <p class="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">${preset.subtitle || `${preset.exercises.length} Movements`}</p>
           </div>
-
-          <div class="space-y-2 pt-2">
-            ${setsHTML}
-          </div>
-
-          <div class="pt-3 flex items-center justify-between border-t border-slate-800/60">
-            <button onclick="addSet(${exIdx})" class="text-xs font-bold text-brand-400 active:scale-95 py-1 px-1">
-              + Add Set
-            </button>
-            
-            ${timerDisplayHTML}
-
-            <button onclick="removeSet(${exIdx})" class="text-xs font-bold text-slate-500 hover:text-slate-400 active:scale-95 py-1 px-1 ${ex.sets.length > 1 ? '' : 'invisible'}">
-              Remove Set
+          <div class="pt-3">
+            <button onclick="startSession(${idx})" class="w-full py-2.5 rounded-xl bg-slate-900/90 hover:bg-brand-500 hover:text-slate-950 text-brand-400 border border-brand-500/20 font-black text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-1">
+              <span>Start</span>
+              <span>→</span>
             </button>
           </div>
         `;
         container.appendChild(card);
       });
-
-      // Bottom Button to add a new movement on-the-fly during active workout
-      const addMovementRow = document.createElement('div');
-      addMovementRow.className = "pt-2 pb-6";
-      addMovementRow.innerHTML = `
-        <button onclick="openAddSessionExModal()" class="w-full py-3.5 rounded-2xl bg-slate-900 border border-dashed border-slate-800 hover:border-brand-500/50 text-brand-400 hover:text-brand-300 font-black text-xs uppercase tracking-wider active:scale-98 transition-all flex items-center justify-center gap-2">
-          <span class="text-base font-bold">+</span>
-          <span>Add Movement to Workout</span>
-        </button>
-      `;
-      container.appendChild(addMovementRow);
     }
 
-    function removeExerciseFromSession(exIdx, exName) {
-      if (activeSession.exercises.length <= 1) {
-        showConfirm("Cannot Remove", "A session must have at least one exercise.", () => {});
-        return;
-      }
-      showConfirm("Remove Exercise?", `Remove "${exName}" from today's workout?`, () => {
-        if (activeTimer.exIndex === exIdx) {
-          dismissAlarm();
-        } else if (activeTimer.exIndex > exIdx) {
-          activeTimer.exIndex--;
+    function startSession(presetIdx) {
+      unlockAudioEngine();
+      requestScreenWakeLock();
+
+      const preset = appState.presets[presetIdx];
+      const initialExerciseNames = preset.exercises.map(e => e.name);
+
+      activeSession = {
+        presetId: preset.id,
+        presetName: preset.name,
+        originalExerciseNames: initialExerciseNames,
+        startTime: new Date().toISOString(),
+        exercises: preset.exercises.map(ex => {
+          const pastHistory = getPreviousExerciseStats(ex.name);
+          const initialSetCount = (pastHistory && pastHistory.length > 0) ? pastHistory.length : 3;
+
+          const sets = [];
+          for (let i = 0; i < initialSetCount; i++) {
+            const histSet = pastHistory ? pastHistory[i] : null;
+            sets.push({
+              weight: '',
+              reps: '',
+              completed: false,
+              ghostWeight: histSet ? histSet.weight : '',
+              ghostReps: histSet ? histSet.reps : ''
+            });
+          }
+
+          return {
+            name: ex.name,
+            target: ex.target || "General",
+            timerDuration: appState.defaultTimer || 90,
+            sets: sets
+          };
+        })
+      };
+
+      const vDash = document.getElementById('view-dashboard');
+      const vSess = document.getElementById('view-session');
+      if (vDash) vDash.classList.add('hidden');
+      if (vSess) vSess.classList.remove('hidden');
+
+      renderSession();
+    }
+
+    function getPreviousExerciseStats(exerciseName) {
+      if (!appState.logs || appState.logs.length === 0) return null;
+      for (let i = appState.logs.length - 1; i >= 0; i--) {
+        const session = appState.logs[i];
+        const match = session.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
+        if (match && match.sets && match.sets.length > 0) {
+          return match.sets.filter(s => s.completed && s.weight && s.reps);
         }
-        activeSession.exercises.splice(exIdx, 1);
-        renderSession();
+      }
+      return null;
+    }
+
+    function renderSession() {
+      if (!activeSession) return;
+
+      const titleEl = document.getElementById('session-title');
+      const subEl = document.getElementById('session-subtitle');
+      const container = document.getElementById('session-exercises');
+      if (!container) return;
+
+      if (titleEl) titleEl.innerText = activeSession.presetName;
+      if (subEl) subEl.innerText = `${activeSession.exercises.length} Movements Ready`;
+
+      container.innerHTML = '';
+
+      activeSession.exercises.forEach((ex, exIdx) => {
+        const completedCount = ex.sets.filter(s => s.completed).length;
+        const totalSets = ex.sets.length;
+        const past = getPreviousExerciseStats(ex.name);
+        const topPastSet = past && past.length > 0 ? past[0] : null;
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-4 shadow-sm";
+
+        let setsHTML = '';
+        ex.sets.forEach((set, setIdx) => {
+          const isDone = set.completed;
+          setsHTML += `
+            <div class="flex items-center gap-2 text-sm">
+              <span class="w-6 font-mono font-bold text-xs ${isDone ? 'text-brand-400' : 'text-slate-500'}">#${setIdx + 1}</span>
+              
+              <!-- Weight Input -->
+              <div class="relative flex-1">
+                <input type="number" inputmode="decimal" step="0.5" 
+                  value="${set.weight}" 
+                  placeholder="${set.ghostWeight || 'kg'}" 
+                  onchange="updateSetData(${exIdx}, ${setIdx}, 'weight', this.value)"
+                  onfocus="unlockAudioEngine()"
+                  class="w-full bg-slate-950 border ${isDone ? 'border-brand-500/40' : 'border-slate-800'} rounded-xl px-3 py-2.5 text-center font-black text-white placeholder-slate-600 focus:outline-none focus:border-brand-500">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500 uppercase">${appState.unit}</span>
+              </div>
+
+              <!-- Reps Input -->
+              <div class="relative flex-1">
+                <input type="number" inputmode="numeric" 
+                  value="${set.reps}" 
+                  placeholder="${set.ghostReps || 'reps'}" 
+                  onchange="updateSetData(${exIdx}, ${setIdx}, 'reps', this.value)"
+                  onfocus="unlockAudioEngine()"
+                  class="w-full bg-slate-950 border ${isDone ? 'border-brand-500/40' : 'border-slate-800'} rounded-xl px-3 py-2.5 text-center font-black text-white placeholder-slate-600 focus:outline-none focus:border-brand-500">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500">reps</span>
+              </div>
+
+              <!-- Checkmark Completion Button -->
+              <button onclick="toggleSetComplete(${exIdx}, ${setIdx})" 
+                class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-all active:scale-90 ${isDone ? 'bg-brand-500 text-slate-950 shadow-lg shadow-brand-500/20' : 'bg-slate-950 border border-slate-800 text-slate-500 hover:text-slate-300'}">
+                ✓
+              </button>
+            </div>
+          `;
+        });
+
+        // Timer Pill Status
+        let timerButtonHTML = '';
+        const isThisTimerActive = (activeTimer.exIndex === exIdx && activeTimer.targetEndTime !== null);
+        const isThisTimerRinging = (activeTimer.exIndex === exIdx && activeTimer.isRinging);
+
+        if (isThisTimerRinging) {
+          timerButtonHTML = `
+            <button onclick="dismissAlarm()" class="px-3.5 py-1.5 rounded-xl bg-red-600 text-white font-black text-xs uppercase tracking-wider alarm-pulsing flex items-center gap-1.5 shadow-lg shadow-red-600/30">
+              <span>🔔 TIME UP — STOP</span>
+            </button>
+          `;
+        } else if (isThisTimerActive) {
+          timerButtonHTML = `
+            <button onclick="stopTimer()" class="px-3 py-1.5 rounded-xl bg-brand-500/20 border border-brand-500/40 text-brand-400 font-mono font-black text-xs flex items-center gap-1.5">
+              <span>⏱️ ${formatSeconds(activeTimer.remaining)}</span>
+              <span class="text-[10px]">■</span>
+            </button>
+          `;
+        } else {
+          timerButtonHTML = `
+            <button onclick="startTimerForExercise(${exIdx})" class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-brand-400 font-mono font-bold text-xs flex items-center gap-1.5 active:scale-95">
+              <span>⏱️ ${formatSeconds(ex.timerDuration)}</span>
+              <span class="text-[10px]">▶</span>
+            </button>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="space-y-1">
+              <h3 class="font-black text-base text-white tracking-tight leading-snug">${ex.name}</h3>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                  ${ex.target}
+                </span>
+                <span class="text-[11px] text-slate-400 font-medium">
+                  ${topPastSet ? `Last: ${topPastSet.weight}${appState.unit} × ${topPastSet.reps}` : 'First time tracking'}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 ${completedCount === totalSets && totalSets > 0 ? 'text-brand-400 border-brand-500/30' : 'text-slate-400'}">
+                ${completedCount} / ${totalSets} SETS
+              </span>
+              <!-- Sleek 3-Dot Action Menu Trigger -->
+              <button onclick="openExerciseActionMenu(${exIdx})" class="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold active:scale-90 transition-transform">
+                ⋮
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2.5 pt-1">
+            ${setsHTML}
+          </div>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <button onclick="addSetToExercise(${exIdx})" class="text-brand-400 hover:text-brand-300 font-bold active:scale-95">
+              + Add Set
+            </button>
+            ${timerButtonHTML}
+            <button onclick="removeSetFromExercise(${exIdx})" class="text-slate-500 hover:text-red-400 font-bold active:scale-95">
+              Remove Set
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
       });
+
+      // Bottom In-Session Add Movement Button
+      const addRow = document.createElement('div');
+      addRow.className = "pt-2 pb-6 text-center";
+      addRow.innerHTML = `
+        <button onclick="openAddSessionExModal()" class="w-full py-3.5 rounded-2xl bg-slate-900 border border-dashed border-slate-700 hover:border-brand-500 text-brand-400 font-black text-xs uppercase tracking-wider active:scale-98 transition-all flex items-center justify-center gap-1.5 shadow-sm">
+          <span>+ Add Movement to Workout</span>
+        </button>
+      `;
+      container.appendChild(addRow);
+    }
+
+    function openExerciseActionMenu(exIdx) {
+      if (!activeSession || !activeSession.exercises[exIdx]) return;
+      selectedExerciseActionIndex = exIdx;
+      const title = document.getElementById('exercise-action-title');
+      if (title) title.innerText = activeSession.exercises[exIdx].name;
+
+      const modal = document.getElementById('modal-exercise-options');
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+      }
+    }
+
+    function closeExerciseActionMenu() {
+      const modal = document.getElementById('modal-exercise-options');
+      if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+          selectedExerciseActionIndex = null;
+        }, 150);
+      }
+    }
+
+    function confirmRemoveExerciseFromSession() {
+      if (selectedExerciseActionIndex === null || !activeSession) return;
+      const idx = selectedExerciseActionIndex;
+      closeExerciseActionMenu();
+
+      if (activeTimer.exIndex === idx) {
+        stopTimer();
+      } else if (activeTimer.exIndex > idx) {
+        activeTimer.exIndex--;
+      }
+
+      activeSession.exercises.splice(idx, 1);
+      renderSession();
     }
 
     function openAddSessionExModal() {
-      document.getElementById('input-session-new-ex-name').value = '';
-      document.getElementById('input-session-new-ex-target').value = '';
-      document.getElementById('modal-add-session-ex').classList.remove('hidden');
-      setTimeout(() => document.getElementById('input-session-new-ex-name').focus(), 150);
+      const modal = document.getElementById('modal-add-session-ex');
+      const nameInput = document.getElementById('input-session-new-ex-name');
+      const targetInput = document.getElementById('input-session-new-ex-target');
+      if (nameInput) nameInput.value = '';
+      if (targetInput) targetInput.value = '';
+      if (modal) modal.classList.remove('hidden');
     }
 
     function closeAddSessionExModal() {
-      document.getElementById('modal-add-session-ex').classList.add('hidden');
+      const modal = document.getElementById('modal-add-session-ex');
+      if (modal) modal.classList.add('hidden');
     }
 
     function submitAddSessionExercise() {
       const nameInput = document.getElementById('input-session-new-ex-name');
       const targetInput = document.getElementById('input-session-new-ex-target');
-      const name = nameInput.value.trim();
-      const target = targetInput.value.trim() || 'General';
+      const name = nameInput ? nameInput.value.trim() : '';
+      const target = targetInput ? targetInput.value.trim() : 'Accessory';
 
-      if (!name) return;
+      if (!name || !activeSession) return;
 
-      const hist = getHistory(name);
-      const baseW = hist ? hist.bestSet.weight : '';
-      const baseR = hist ? hist.bestSet.reps : '';
-      const initialSetCount = hist ? Math.min(Math.max(hist.totalSetsLogged, 2), 6) : 3;
-      const initialSets = [];
-      for (let s = 0; s < initialSetCount; s++) {
-        initialSets.push({ weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false });
+      const pastHistory = getPreviousExerciseStats(name);
+      const initialSetCount = (pastHistory && pastHistory.length > 0) ? pastHistory.length : 3;
+
+      const sets = [];
+      for (let i = 0; i < initialSetCount; i++) {
+        const hist = pastHistory ? pastHistory[i] : null;
+        sets.push({
+          weight: '',
+          reps: '',
+          completed: false,
+          ghostWeight: hist ? hist.weight : '',
+          ghostReps: hist ? hist.reps : ''
+        });
       }
 
       activeSession.exercises.push({
         name: name,
-        target: target,
-        history: hist ? hist.bestSet : null,
-        sets: initialSets
+        target: target || 'Accessory',
+        timerDuration: appState.defaultTimer || 90,
+        sets: sets
       });
 
       closeAddSessionExModal();
       renderSession();
     }
 
-    function evalCoachTriggers(ex, set, exIdx) {
-      const completedSets = ex.sets.filter(s => s.completed).length;
-      const totalSets = ex.sets.length;
-      const setsRemaining = totalSets - completedSets;
-
-      const cW = parseFloat(set.weight) || 0;
-      const cR = parseFloat(set.reps) || 0;
-
-      // 1. High Impact: PR Smashed
-      if (ex.history) {
-        const hW = parseFloat(ex.history.weight) || 0;
-        const hR = parseFloat(ex.history.reps) || 0;
-        if (cW > hW || (cW === hW && cR > hR)) {
-          showCoachModal(
-            "NEW PR UNLOCKED",
-            "🚀",
-            "LIGHT WEIGHT BABY!",
-            `You shattered your previous mark of ${hW} ${appState.unit} × ${hR}. Ruthless progression!`,
-            "Lock In & Keep Cooking →",
-            "bg-brand-500/10 border-brand-500/30 text-brand-400",
-            "bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-brand-500/25"
-          );
-          return;
-        }
-      }
-
-      // 2. High Impact: Final Set Countdown
-      if (setsRemaining === 1) {
-        showCoachModal(
-          "FINAL SET ALERT",
-          "🔥",
-          "EMPTY THE TANK!",
-          `Just 1 set left on ${ex.name}. True muscular failure is way beyond mental hesitation. Finish strong!`,
-          `Lock In For Set ${totalCountOr(totalSets)} →`,
-          "bg-amber-500/10 border-amber-500/30 text-amber-400",
-          "bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/25"
-        );
-        return;
-      }
-
-      // 3. High Impact: Plateau Check
-      if (ex.history) {
-        const hW = parseFloat(ex.history.weight) || 0;
-        const hR = parseFloat(ex.history.reps) || 0;
-        if (cW === hW && cR === hR && completedSets === 1) {
-          showCoachModal(
-            "COACH CHECK-IN",
-            "👀",
-            "DEMAND MORE",
-            `You hit ${hW} ${appState.unit} × ${hR} last time. Don't settle for comfortable—demand that extra rep on Set 2!`,
-            "Got It, One More Rep →",
-            "bg-red-500/10 border-red-500/30 text-red-400",
-            "bg-red-500 hover:bg-red-400 text-white shadow-red-500/25"
-          );
-        }
-      }
+    function updateSetData(exIdx, setIdx, field, val) {
+      if (!activeSession) return;
+      activeSession.exercises[exIdx].sets[setIdx][field] = val;
     }
 
-    function totalCountOr(val) {
-      return val || 3;
-    }
+    function toggleSetComplete(exIdx, setIdx) {
+      unlockAudioEngine();
+      if (!activeSession) return;
 
-    function addSet(exIdx) {
+      const set = activeSession.exercises[exIdx].sets[setIdx];
       const ex = activeSession.exercises[exIdx];
-      const last = ex.sets[ex.sets.length - 1];
+
+      // Adopt ghost values on tap if empty
+      if (!set.completed) {
+        if (!set.weight && set.ghostWeight) set.weight = set.ghostWeight;
+        if (!set.reps && set.ghostReps) set.reps = set.ghostReps;
+        set.completed = true;
+
+        // Trigger Coach Banter & Timer
+        handleCoachFeedback(exIdx, setIdx);
+        startTimerForExercise(exIdx);
+      } else {
+        set.completed = false;
+      }
+
+      renderSession();
+    }
+
+    function addSetToExercise(exIdx) {
+      if (!activeSession) return;
+      const ex = activeSession.exercises[exIdx];
+      const lastSet = ex.sets[ex.sets.length - 1];
       ex.sets.push({
-        weight: '', reps: '',
-        ghostW: last ? (last.weight || last.ghostW) : '',
-        ghostR: last ? (last.reps || last.ghostR) : '',
-        completed: false
+        weight: '',
+        reps: '',
+        completed: false,
+        ghostWeight: lastSet ? (lastSet.weight || lastSet.ghostWeight) : '',
+        ghostReps: lastSet ? (lastSet.reps || lastSet.ghostReps) : ''
       });
       renderSession();
     }
 
-    function removeSet(exIdx) {
+    function removeSetFromExercise(exIdx) {
+      if (!activeSession) return;
       const ex = activeSession.exercises[exIdx];
       if (ex.sets.length > 1) {
         ex.sets.pop();
@@ -1308,628 +1302,654 @@
       }
     }
 
-    function formatTime(secs) {
-      const m = Math.floor(secs / 60);
-      const s = Math.max(0, secs % 60);
-      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    }
+    function handleCoachFeedback(exIdx, setIdx) {
+      if (!appState.banterEnabled) return;
+      const ex = activeSession.exercises[exIdx];
+      const completedCount = ex.sets.filter(s => s.completed).length;
+      const totalSets = ex.sets.length;
+      const remainingSets = totalSets - completedCount;
 
-    function stopTimer() {
-      if (activeTimer.intervalId) clearInterval(activeTimer.intervalId);
-      activeTimer.intervalId = null;
-      activeTimer.targetEndTime = null;
-    }
+      const currentSet = ex.sets[setIdx];
+      const currentWeight = parseFloat(currentSet.weight) || 0;
+      const currentReps = parseInt(currentSet.reps) || 0;
 
-    function toggleTimer(exIdx) {
-      unlockAudioEngine();
+      // Check for PR
+      const pastHistory = getPreviousExerciseStats(ex.name);
+      let isPr = false;
+      let topPastWeight = 0;
 
-      if (activeTimer.isRinging) {
-        dismissAlarm();
-        return;
-      }
-
-      if (activeTimer.exIndex === exIdx && activeTimer.intervalId) {
-        stopTimer();
-        activeTimer.exIndex = null;
-        renderSession();
-        return;
-      }
-
-      stopTimer();
-      activeTimer.exIndex = exIdx;
-      activeTimer.targetEndTime = Date.now() + (appState.defaultTimer * 1000);
-      activeTimer.remaining = appState.defaultTimer;
-      
-      activeTimer.intervalId = setInterval(() => {
-        const now = Date.now();
-        const diffSeconds = Math.round((activeTimer.targetEndTime - now) / 1000);
-        activeTimer.remaining = Math.max(0, diffSeconds);
-        
-        const displayEl = document.getElementById(`timer-display-${activeTimer.exIndex}`);
-        if (displayEl) {
-          displayEl.innerText = formatTime(activeTimer.remaining);
+      if (pastHistory && pastHistory.length > 0) {
+        pastHistory.forEach(s => {
+          const w = parseFloat(s.weight) || 0;
+          if (w > topPastWeight) topPastWeight = w;
+        });
+        if (currentWeight > topPastWeight && topPastWeight > 0) {
+          isPr = true;
         }
+      }
 
-        if (activeTimer.remaining <= 0) {
-          stopTimer();
+      if (isPr) {
+        showCoachModal({
+          pill: "PR SMASHED 🚀",
+          headline: "NEW MILESTONE!",
+          message: `You just pushed ${currentWeight} ${appState.unit} on ${ex.name}! That crushes your previous top mark of ${topPastWeight} ${appState.unit}. The standard has been raised!`,
+          buttonText: "Lock In & Continue →"
+        });
+        return;
+      }
+
+      // Penultimate Set: Only 1 set remaining
+      if (remainingSets === 1) {
+        showCoachModal({
+          pill: "FINAL SET ALERT 🔥",
+          headline: "EMPTY THE TANK!",
+          message: `Just ONE set left on ${ex.name}. Perceived failure is at ~70% of absolute motor recruitment. Your mind quits before the muscle—give it everything!`,
+          buttonText: "Dominate Set " + totalSets + " →"
+        });
+        return;
+      }
+
+      // Check for Matching Plateau on Set 1
+      if (setIdx === 0 && topPastSetMatched(ex.name, currentWeight, currentReps)) {
+        showCoachModal({
+          pill: "ACCOUNTABILITY CHECK 👀",
+          headline: "DON'T SETTLE DAWG",
+          message: `You hit ${currentWeight} ${appState.unit} × ${currentReps} reps last time. Don't back out now—demand that progression on Set 2!`,
+          buttonText: "Attack Set 2 →"
+        });
+      }
+    }
+
+    function topPastSetMatched(name, weight, reps) {
+      const past = getPreviousExerciseStats(name);
+      if (!past || past.length === 0) return false;
+      return (parseFloat(past[0].weight) === weight && parseInt(past[0].reps) === reps);
+    }
+
+    function showCoachModal(data) {
+      const modal = document.getElementById('modal-coach');
+      const box = document.getElementById('modal-coach-box');
+      const pill = document.getElementById('coach-pill-text');
+      const headline = document.getElementById('coach-headline');
+      const message = document.getElementById('coach-message');
+      const btn = document.getElementById('btn-coach-action');
+
+      if (pill) pill.innerText = data.pill || 'COACH ALERT';
+      if (headline) headline.innerText = data.headline || 'LIGHT WEIGHT BABY!';
+      if (message) message.innerText = data.message || '';
+      if (btn) btn.innerText = data.buttonText || 'Continue →';
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        if (box) box.classList.remove('scale-95');
+      }
+    }
+
+    function dismissCoachModal() {
+      const modal = document.getElementById('modal-coach');
+      const box = document.getElementById('modal-coach-box');
+      if (box) box.classList.add('scale-95');
+      if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      }
+    }
+
+    function startTimerForExercise(exIdx) {
+      unlockAudioEngine();
+      stopTimer();
+
+      const duration = (activeSession && activeSession.exercises[exIdx]) 
+        ? activeSession.exercises[exIdx].timerDuration 
+        : appState.defaultTimer;
+
+      activeTimer.exIndex = exIdx;
+      activeTimer.remaining = duration;
+      activeTimer.targetEndTime = Date.now() + (duration * 1000);
+      activeTimer.isRinging = false;
+
+      activeTimer.intervalId = setInterval(() => {
+        const delta = Math.round((activeTimer.targetEndTime - Date.now()) / 1000);
+        if (delta <= 0) {
+          activeTimer.remaining = 0;
+          clearInterval(activeTimer.intervalId);
+          activeTimer.intervalId = null;
           startContinuousAlarm();
+        } else {
+          activeTimer.remaining = delta;
+          updateTimerUI(exIdx);
         }
       }, 500);
 
       renderSession();
     }
 
-    function openTimerModal() {
-      const modal = document.getElementById('modal-edit-timer');
-      const box = document.getElementById('modal-edit-timer-box');
-      const input = document.getElementById('input-edit-timer');
-      
-      input.value = appState.defaultTimer;
-      modal.classList.remove('hidden');
-      void modal.offsetWidth;
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-      setTimeout(() => input.focus(), 150);
-    }
-
-    function closeTimerModal() {
-      const modal = document.getElementById('modal-edit-timer');
-      const box = document.getElementById('modal-edit-timer-box');
-      modal.classList.add('opacity-0');
-      box.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    function quickSetTimer(seconds) {
-      document.getElementById('input-edit-timer').value = seconds;
-    }
-
-    function saveTimerModal() {
-      const val = parseInt(document.getElementById('input-edit-timer').value);
-      if (val > 0) {
-        appState.defaultTimer = val;
-        saveState();
+    function stopTimer() {
+      if (activeTimer.intervalId) {
+        clearInterval(activeTimer.intervalId);
+        activeTimer.intervalId = null;
       }
-      closeTimerModal();
-      if (activeSession) renderSession();
+      activeTimer.targetEndTime = null;
+      activeTimer.remaining = 0;
     }
 
-    let newSplitExercises = [];
-    function openNewSplitModal() {
-      newSplitExercises = [];
-      document.getElementById('input-split-name').value = '';
-      document.getElementById('input-split-target').value = '';
-      renderNewSplitExerciseList();
-      document.getElementById('modal-new-split').classList.remove('hidden');
-    }
-
-    function closeNewSplitModal() {
-      document.getElementById('modal-new-split').classList.add('hidden');
-    }
-
-    function renderNewSplitExerciseList() {
-      const list = document.getElementById('new-split-exercise-list');
-      list.innerHTML = '';
-      if (newSplitExercises.length === 0) {
-        list.innerHTML = `
-          <div class="text-xs text-slate-500 text-center py-4 border border-dashed border-slate-800 rounded-xl">
-            No movements added yet. Type below and tap + Add.
-          </div>
-        `;
-        return;
+    function updateTimerUI(exIdx) {
+      if (activeSession && activeTimer.exIndex === exIdx) {
+        // Quick update without full DOM re-render
+        const card = document.getElementById('session-exercises');
+        if (card) {
+          const btns = card.querySelectorAll('button');
+          btns.forEach(b => {
+            if (b.innerText.includes('⏱️') && !b.innerText.includes('▶')) {
+              b.innerHTML = `<span>⏱️ ${formatSeconds(activeTimer.remaining)}</span><span class="text-[10px]">■</span>`;
+            }
+          });
+        }
       }
-      newSplitExercises.forEach((ex, idx) => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white";
-        item.innerHTML = `
-          <span>${idx+1}. ${ex.name}</span>
-          <button onclick="removeNewSplitExercise(${idx})" class="text-slate-500 hover:text-red-400">✕</button>
-        `;
-        list.appendChild(item);
-      });
     }
 
-    function appendExerciseRow() {
-      const input = document.getElementById('input-add-exercise-name');
-      const name = input.value.trim();
-      if (!name) return;
-      newSplitExercises.push({ name });
-      input.value = '';
-      renderNewSplitExerciseList();
+    function formatSeconds(sec) {
+      const s = Math.max(0, parseInt(sec) || 0);
+      const m = Math.floor(s / 60);
+      const rem = s % 60;
+      return `${m < 10 ? '0' : ''}${m}:${rem < 10 ? '0' : ''}${rem}`;
     }
 
-    function removeNewSplitExercise(idx) {
-      newSplitExercises.splice(idx, 1);
-      renderNewSplitExerciseList();
+    function finishSession() {
+      if (!activeSession) return;
+
+      // Check if movements were added or removed
+      const currentNames = activeSession.exercises.map(e => e.name);
+      const originalNames = activeSession.originalExerciseNames || [];
+      const hasChanged = (
+        currentNames.length !== originalNames.length ||
+        currentNames.some((name, i) => name !== originalNames[i])
+      );
+
+      if (hasChanged) {
+        const promptModal = document.getElementById('modal-split-sync-prompt');
+        const splitNameEl = document.getElementById('prompt-sync-split-name');
+        if (splitNameEl) splitNameEl.innerText = activeSession.presetName;
+        if (promptModal) promptModal.classList.remove('hidden');
+      } else {
+        saveCompletedWorkout();
+      }
     }
 
-    function saveNewSplit() {
-      const name = document.getElementById('input-split-name').value.trim();
-      const target = document.getElementById('input-split-target').value.trim() || 'General';
-      if (!name) return;
-      if (newSplitExercises.length === 0) return;
+    function resolveSplitSync(shouldUpdatePermanent) {
+      const promptModal = document.getElementById('modal-split-sync-prompt');
+      if (promptModal) promptModal.classList.add('hidden');
 
-      const newId = 'custom_' + Date.now();
-      appState.presets.push({
-        id: newId,
-        name: name,
-        subtitle: target,
-        icon: "⚡",
-        color: "from-slate-900 via-brand-950/40 to-slate-900",
-        border: "border-brand-500/30",
-        exercises: newSplitExercises.map(e => ({ name: e.name, target: target }))
-      });
+      if (shouldUpdatePermanent && activeSession) {
+        // Update the preset permanently
+        const preset = appState.presets.find(p => p.id === activeSession.presetId);
+        if (preset) {
+          preset.exercises = activeSession.exercises.map(e => ({
+            name: e.name,
+            target: e.target || 'Movement'
+          }));
+          saveState();
+        }
+      }
+
+      saveCompletedWorkout();
+    }
+
+    function saveCompletedWorkout() {
+      if (!activeSession) return;
+
+      dismissAlarm();
+      stopTimer();
+      releaseScreenWakeLock();
+
+      const logEntry = {
+        id: "log_" + Date.now(),
+        date: new Date().toISOString(),
+        presetId: activeSession.presetId,
+        presetName: activeSession.presetName,
+        exercises: activeSession.exercises.map(e => ({
+          name: e.name,
+          target: e.target,
+          sets: e.sets.map(s => ({
+            weight: s.weight || '0',
+            reps: s.reps || '0',
+            completed: s.completed
+          }))
+        }))
+      };
+
+      appState.logs.push(logEntry);
       saveState();
-      closeNewSplitModal();
-      renderDashboard();
-      if (activeNavTab === 'settings') renderSettingsView();
+
+      activeSession = null;
+      switchNavTab('log');
     }
 
-    let editingSplitId = null;
-    let editingSplitExercises = [];
-
-    function openEditSplitModal(splitId) {
-      const preset = appState.presets.find(p => p.id === splitId);
-      if (!preset) return;
-
-      editingSplitId = splitId;
-      editingSplitExercises = JSON.parse(JSON.stringify(preset.exercises || []));
-      
-      document.getElementById('input-edit-split-name').value = preset.name || '';
-      document.getElementById('input-edit-split-target').value = preset.subtitle || preset.target || '';
-      document.getElementById('input-edit-split-add-name').value = '';
-      
-      renderEditSplitExerciseList();
-      document.getElementById('modal-edit-split').classList.remove('hidden');
+    function handleBackClick() {
+      showConfirmModal(
+        "Discard Session?",
+        "Are you sure? Any logged sets in this workout will not be saved.",
+        () => {
+          dismissAlarm();
+          stopTimer();
+          releaseScreenWakeLock();
+          activeSession = null;
+          switchNavTab('workout');
+        }
+      );
     }
 
-    function closeEditSplitModal() {
-      document.getElementById('modal-edit-split').classList.add('hidden');
-      editingSplitId = null;
-      editingSplitExercises = [];
-    }
+    function setLogSubView(mode) {
+      logMainMode = mode;
+      const btnHist = document.getElementById('toggle-log-history');
+      const btnChart = document.getElementById('toggle-log-charts');
+      const panelHist = document.getElementById('log-subview-history');
+      const panelChart = document.getElementById('log-subview-charts');
 
-    function renderEditSplitExerciseList() {
-      const list = document.getElementById('edit-split-exercise-list');
-      list.innerHTML = '';
-      if (editingSplitExercises.length === 0) {
-        list.innerHTML = `
-          <div class="text-xs text-slate-500 text-center py-4 border border-dashed border-slate-800 rounded-xl">
-            No movements in this split. Type below and tap + Add.
-          </div>
-        `;
-        return;
+      if (mode === 'history') {
+        if (btnHist) btnHist.className = "px-3 py-1 rounded-lg text-xs font-black transition-all bg-brand-500 text-slate-950";
+        if (btnChart) btnChart.className = "px-3 py-1 rounded-lg text-xs font-black transition-all text-slate-400 hover:text-white";
+        if (panelHist) panelHist.classList.remove('hidden');
+        if (panelChart) panelChart.classList.add('hidden');
+        renderLogHistory();
+      } else {
+        if (btnHist) btnHist.className = "px-3 py-1 rounded-lg text-xs font-black transition-all text-slate-400 hover:text-white";
+        if (btnChart) btnChart.className = "px-3 py-1 rounded-lg text-xs font-black transition-all bg-brand-500 text-slate-950";
+        if (panelHist) panelHist.classList.add('hidden');
+        if (panelChart) panelChart.classList.remove('hidden');
+        renderLogCharts();
       }
-      editingSplitExercises.forEach((ex, idx) => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white";
-        item.innerHTML = `
-          <div class="flex items-center gap-2 truncate pr-2">
-            <span class="text-slate-500 text-[10px] font-mono">${idx+1}.</span>
-            <span class="truncate">${ex.name}</span>
-          </div>
-          <button onclick="removeEditSplitExercise(${idx})" class="text-slate-500 hover:text-red-400 px-1 py-0.5 rounded transition-colors flex-shrink-0">✕</button>
-        `;
-        list.appendChild(item);
-      });
     }
 
-    function appendEditSplitExerciseRow() {
-      const input = document.getElementById('input-edit-split-add-name');
-      const name = input.value.trim();
-      if (!name) return;
-      const target = document.getElementById('input-edit-split-target').value.trim() || 'General';
-      editingSplitExercises.push({ name, target });
-      input.value = '';
-      renderEditSplitExerciseList();
-    }
-
-    function removeEditSplitExercise(idx) {
-      editingSplitExercises.splice(idx, 1);
-      renderEditSplitExerciseList();
-    }
-
-    function saveEditedSplit() {
-      if (!editingSplitId) return;
-      const preset = appState.presets.find(p => p.id === editingSplitId);
-      if (!preset) return;
-
-      const newName = document.getElementById('input-edit-split-name').value.trim();
-      const newTarget = document.getElementById('input-edit-split-target').value.trim();
-
-      if (!newName) return;
-      if (editingSplitExercises.length === 0) {
-        showConfirm("Split Needs Exercises", "Please add at least one exercise to this split.", () => {});
-        return;
-      }
-
-      preset.name = newName;
-      preset.subtitle = newTarget || preset.subtitle;
-      preset.exercises = editingSplitExercises;
-
-      saveState();
-      closeEditSplitModal();
-      renderDashboard();
-      if (activeNavTab === 'settings') renderSettingsView();
+    function renderLogView() {
+      setLogSubView(logMainMode);
     }
 
     function shiftWeek(dir) {
       currentWeekOffset += dir;
-      renderWeeklyLog();
+      renderLogHistory();
     }
 
-    function renderLogView() {
-      if (logMainMode === 'history') {
-        renderWeeklyLog();
-      } else {
-        renderChartsView();
-      }
-    }
+    function renderLogHistory() {
+      const list = document.getElementById('weekly-sessions-list');
+      const weekRangeEl = document.getElementById('log-week-range');
+      const weekStatsEl = document.getElementById('log-week-stats');
+      if (!list) return;
 
-    function getStartOfWeek(date) {
-      const d = new Date(date);
-      const day = d.getDay();
-      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-      return new Date(d.setDate(diff));
-    }
-
-    function toggleLogCardExpand(logId) {
-      if (expandedLogCards.has(logId)) {
-        expandedLogCards.delete(logId);
-      } else {
-        expandedLogCards.add(logId);
-      }
-      renderWeeklyLog();
-    }
-
-    function renderWeeklyLog() {
       const now = new Date();
       now.setDate(now.getDate() + (currentWeekOffset * 7));
-      const start = getStartOfWeek(now);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 6);
+      
+      const day = now.getDay();
+      const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(now.setDate(diff));
+      monday.setHours(0, 0, 0, 0);
 
-      const options = { month: 'short', day: 'numeric' };
-      document.getElementById('log-week-range').innerText = `${start.toLocaleDateString(undefined, options)} - ${end.toLocaleDateString(undefined, options)}`;
+      const sunday = new Date(monday);
+      sunday.setDate(sunday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
 
-      start.setHours(0,0,0,0);
-      end.setHours(23,59,59,999);
+      if (weekRangeEl) {
+        weekRangeEl.innerText = `${formatShortDate(monday)} — ${formatShortDate(sunday)}`;
+      }
 
-      const weekLogs = appState.logs.filter(l => {
+      // Filter logs for this week
+      const weeklyLogs = (appState.logs || []).filter(l => {
         const d = new Date(l.date);
-        return d >= start && d <= end;
-      });
+        return d >= monday && d <= sunday;
+      }).reverse();
 
       let totalVolume = 0;
-      weekLogs.forEach(l => {
+      let totalSets = 0;
+
+      weeklyLogs.forEach(l => {
         l.exercises.forEach(e => {
           e.sets.forEach(s => {
-            totalVolume += (parseFloat(s.weight) || 0) * (parseFloat(s.reps) || 0);
+            if (s.completed) {
+              totalSets++;
+              totalVolume += (parseFloat(s.weight) || 0) * (parseInt(s.reps) || 0);
+            }
           });
         });
       });
 
-      document.getElementById('log-week-stats').innerText = `${weekLogs.length} Workouts • ${totalVolume.toLocaleString()} ${appState.unit} volume`;
+      if (weekStatsEl) {
+        weekStatsEl.innerText = `${weeklyLogs.length} Workouts • ${Math.round(totalVolume).toLocaleString()} ${appState.unit} volume`;
+      }
 
-      const list = document.getElementById('weekly-sessions-list');
       list.innerHTML = '';
 
-      if (weekLogs.length === 0) {
+      if (weeklyLogs.length === 0) {
         list.innerHTML = `
-          <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
-            No workouts logged this week yet. Go hit the weights!
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-2">
+            <span class="text-3xl">💤</span>
+            <h4 class="font-black text-white text-sm">No Workouts Recorded</h4>
+            <p class="text-xs text-slate-400">Lock in and crush a session dawg!</p>
           </div>
         `;
         return;
       }
 
-      weekLogs.slice().reverse().forEach(log => {
+      weeklyLogs.forEach(log => {
         const isExpanded = expandedLogCards.has(log.id);
-        const dateObj = new Date(log.date);
+        const logCard = document.createElement('div');
+        logCard.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 transition-all";
 
-        let totalSets = 0;
         let sessionVol = 0;
-        log.exercises.forEach(ex => {
-          totalSets += ex.sets.length;
-          ex.sets.forEach(s => {
-            sessionVol += (parseFloat(s.weight) || 0) * (parseFloat(s.reps) || 0);
+        let sessionSets = 0;
+        log.exercises.forEach(e => {
+          e.sets.forEach(s => {
+            if (s.completed) {
+              sessionSets++;
+              sessionVol += (parseFloat(s.weight) || 0) * (parseInt(s.reps) || 0);
+            }
           });
         });
 
-        const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3 transition-all";
-
-        let expandedHTML = '';
+        // Set breakdown lines when expanded
+        let exerciseBreakdownHTML = '';
         if (isExpanded) {
-          let exercisesTable = '';
           log.exercises.forEach(ex => {
-            let setRows = '';
-            ex.sets.forEach((s, sIdx) => {
-              setRows += `
-                <div class="flex justify-between items-center py-1 text-xs border-b border-slate-800/40 last:border-b-0">
-                  <span class="text-slate-500 font-mono font-bold">Set ${sIdx + 1}</span>
-                  <span class="text-white font-mono font-black">${s.weight} ${appState.unit} × ${s.reps} reps</span>
-                </div>
-              `;
-            });
+            const completedSets = ex.sets.filter(s => s.completed);
+            if (completedSets.length === 0) return;
 
-            exercisesTable += `
-              <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 space-y-1">
-                <span class="text-xs font-black text-brand-400 block">${ex.name}</span>
-                <div class="space-y-0.5 pt-1">
-                  ${setRows}
+            exerciseBreakdownHTML += `
+              <div class="space-y-1.5 pt-2 border-t border-slate-800/60 first:border-none first:pt-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-white">${ex.name}</span>
+                  <span class="text-[10px] text-brand-400 font-bold">${completedSets.length} sets</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                  ${completedSets.map((s, idx) => `
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-lg px-2.5 py-1 text-[11px] font-mono flex items-center justify-between">
+                      <span class="text-slate-500 font-bold">#${idx + 1}</span>
+                      <span class="text-slate-200 font-black">${s.weight}${appState.unit} × ${s.reps}</span>
+                    </div>
+                  `).join('')}
                 </div>
               </div>
             `;
           });
-
-          expandedHTML = `
-            <div class="pt-2 space-y-2 border-t border-slate-800/80">
-              ${exercisesTable}
-            </div>
-          `;
         }
 
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="cursor-pointer flex-1" onclick="toggleLogCardExpand('${log.id}')">
-              <h4 class="font-black text-sm text-white">${log.routineName}</h4>
-              <span class="text-[10px] text-slate-500 font-medium">${dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+        logCard.innerHTML = `
+          <div class="flex items-start justify-between cursor-pointer" onclick="toggleLogCard('${log.id}')">
+            <div>
+              <h3 class="font-black text-base text-white tracking-tight leading-snug">${log.presetName}</h3>
+              <p class="text-[11px] text-slate-400 font-medium">${formatReadableDate(log.date)} • ${log.exercises.length} Movements</p>
             </div>
-            
             <div class="flex items-center gap-2">
-              <button onclick="confirmDeleteWorkout('${log.id}')" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-red-400 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 active:scale-95 transition-all">
+              <button onclick="event.stopPropagation(); confirmDeleteLog('${log.id}')" 
+                class="px-2.5 py-1 rounded-full bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white font-bold text-[10px] uppercase tracking-wider transition-all active:scale-95">
                 Delete
               </button>
-              <button onclick="toggleLogCardExpand('${log.id}')" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold">
-                ${isExpanded ? '▲' : '▼'}
-              </button>
+              <span class="text-slate-500 font-mono text-xs">${isExpanded ? '▲' : '▼'}</span>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 text-[10px] font-bold cursor-pointer" onclick="toggleLogCardExpand('${log.id}')">
-            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-brand-400">${sessionVol.toLocaleString()} ${appState.unit}</span>
-            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300">${totalSets} Sets</span>
-            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-400">${log.exercises.length} Exercises</span>
+          <div class="flex items-center gap-2 pt-1 flex-wrap cursor-pointer" onclick="toggleLogCard('${log.id}')">
+            <span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300">
+              ${sessionSets} Sets
+            </span>
+            <span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-brand-400">
+              ${Math.round(sessionVol).toLocaleString()} ${appState.unit} Volume
+            </span>
           </div>
 
-          ${expandedHTML}
+          ${isExpanded ? `<div class="space-y-3 pt-2">${exerciseBreakdownHTML}</div>` : ''}
         `;
-        list.appendChild(card);
+
+        list.appendChild(logCard);
       });
     }
 
-    function confirmDeleteWorkout(logId) {
-      const target = appState.logs.find(l => l.id === logId);
-      const name = target ? target.routineName : "Workout";
-      showConfirm("Delete Workout?", `Are you sure you want to remove this ${name} session from your history?`, () => {
-        appState.logs = appState.logs.filter(l => l.id !== logId);
-        saveState();
-        renderWeeklyLog();
-      });
+    function toggleLogCard(id) {
+      if (expandedLogCards.has(id)) {
+        expandedLogCards.delete(id);
+      } else {
+        expandedLogCards.add(id);
+      }
+      renderLogHistory();
     }
 
-    // ==========================================
-    // CHARTS VIEW CONTROLLERS
-    // ==========================================
-    function renderChartsView() {
-      populateExerciseDropdown();
+    function confirmDeleteLog(id) {
+      showConfirmModal(
+        "Delete Workout?",
+        "Are you sure you want to permanently delete this logged session?",
+        () => {
+          appState.logs = appState.logs.filter(l => l.id !== id);
+          saveState();
+          renderLogHistory();
+        }
+      );
+    }
+
+    function renderLogCharts() {
+      populateChartExerciseDropdown();
       renderExerciseProgressionChart();
-      renderMacroVolumeBreakdown();
+      renderMacroVolumeDistribution();
     }
 
-    function populateExerciseDropdown() {
+    function getAllAvailableExercises() {
+      const set = new Set();
+      (appState.presets || []).forEach(p => {
+        (p.exercises || []).forEach(e => set.add(e.name));
+      });
+      (appState.logs || []).forEach(l => {
+        (l.exercises || []).forEach(e => set.add(e.name));
+      });
+      return Array.from(set).sort();
+    }
+
+    function populateChartExerciseDropdown() {
       const select = document.getElementById('chart-exercise-select');
-      const currentExVal = select.value;
+      if (!select) return;
+
+      const exercises = getAllAvailableExercises();
+      const currentVal = select.value;
+
       select.innerHTML = '';
 
-      let candidateExercises = new Set();
-      appState.presets.forEach(p => p.exercises.forEach(e => candidateExercises.add(e.name)));
-      appState.logs.forEach(l => l.exercises.forEach(e => candidateExercises.add(e.name)));
-
-      const sortedList = Array.from(candidateExercises).sort();
-
-      if (sortedList.length === 0) {
-        const opt = document.createElement('option');
-        opt.value = "";
-        opt.disabled = true;
-        opt.selected = true;
-        opt.innerText = "No movements found";
-        select.appendChild(opt);
+      if (exercises.length === 0) {
+        select.innerHTML = '<option value="">No exercises logged yet</option>';
         return;
       }
 
-      sortedList.forEach((name, idx) => {
+      exercises.forEach(exName => {
         const opt = document.createElement('option');
-        opt.value = name;
-        opt.innerText = name;
-        if (currentExVal && currentExVal === name) {
-          opt.selected = true;
-        } else if (!currentExVal && idx === 0) {
-          opt.selected = true;
-        }
+        opt.value = exName;
+        opt.innerText = exName;
         select.appendChild(opt);
       });
+
+      if (currentVal && exercises.includes(currentVal)) {
+        select.value = currentVal;
+      } else if (exercises.length > 0) {
+        select.value = exercises[0];
+      }
     }
 
     function renderExerciseProgressionChart() {
       const select = document.getElementById('chart-exercise-select');
-      const exerciseName = select.value;
       const container = document.getElementById('chart-svg-container');
+      if (!select || !container) return;
 
-      if (!exerciseName) {
-        container.innerHTML = `
-          <div class="py-8 px-4 text-center rounded-2xl bg-slate-950/70 border border-dashed border-slate-800 space-y-2">
-            <span class="text-2xl">📋</span>
-            <h4 class="text-xs font-bold text-slate-300">Select an Exercise</h4>
-            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Choose a workout and an exercise above to visualize your strength overload.</p>
-          </div>
-        `;
+      const exName = select.value;
+      if (!exName) {
+        container.innerHTML = '<p class="text-xs text-slate-500 py-4 text-center">Select an exercise to view progression</p>';
         return;
       }
 
-      const dataPoints = [];
-      appState.logs.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(l => {
-        const ex = l.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
-        if (ex && ex.sets.length > 0) {
-          let maxW = 0;
-          let bestR = 0;
-          ex.sets.forEach(s => {
-            const w = parseFloat(s.weight) || 0;
-            const r = parseFloat(s.reps) || 0;
-            if (w > maxW) {
-              maxW = w;
-              bestR = r;
+      // Collect data points from history
+      const historyPoints = [];
+      (appState.logs || []).forEach(log => {
+        const match = log.exercises.find(e => e.name.toLowerCase() === exName.toLowerCase());
+        if (match && match.sets) {
+          let topWeight = 0;
+          let topReps = 0;
+          match.sets.forEach(s => {
+            if (s.completed) {
+              const w = parseFloat(s.weight) || 0;
+              const r = parseInt(s.reps) || 0;
+              if (w > topWeight) {
+                topWeight = w;
+                topReps = r;
+              }
             }
           });
-          if (maxW > 0) {
-            dataPoints.push({
-              date: new Date(l.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-              weight: maxW,
-              reps: bestR
+          if (topWeight > 0) {
+            historyPoints.push({
+              date: log.date,
+              weight: topWeight,
+              reps: topReps
             });
           }
         }
       });
 
-      if (dataPoints.length < 2) {
+      // Sort chronologically
+      historyPoints.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      if (historyPoints.length < 2) {
         container.innerHTML = `
-          <div class="py-8 px-4 text-center rounded-2xl bg-slate-950/70 border border-dashed border-slate-800 space-y-2">
+          <div class="bg-slate-950 border border-dashed border-slate-800 rounded-2xl p-6 text-center space-y-2">
             <span class="text-2xl">📈</span>
-            <h4 class="text-xs font-bold text-slate-300">Keep Lifting, Dawg!</h4>
-            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Log at least 2 sessions of ${exerciseName} to generate your progressive overload curve.</p>
+            <h4 class="font-bold text-white text-xs">Keep Lifting, Dawg!</h4>
+            <p class="text-[11px] text-slate-400">Log at least 2 sessions of ${exName} to generate your progressive overload curve.</p>
           </div>
         `;
         return;
       }
 
-      const width = 360;
-      const height = 170;
-      const padL = 40;
-      const padR = 25;
-      const padT = 25;
-      const padB = 30;
+      // Render SVG Progression Chart
+      const width = 340;
+      const height = 160;
+      const pad = 24;
 
-      const weights = dataPoints.map(d => d.weight);
-      const minW = Math.max(0, Math.floor(Math.min(...weights) * 0.85));
-      const maxW = Math.ceil(Math.max(...weights) * 1.12);
+      const weights = historyPoints.map(p => p.weight);
+      const minW = Math.max(0, Math.min(...weights) - 2.5);
+      const maxW = Math.max(...weights) + 2.5;
 
-      const getX = (idx) => padL + (idx / (dataPoints.length - 1)) * (width - padL - padR);
-      const getY = (val) => height - padB - ((val - minW) / (maxW - minW || 1)) * (height - padT - padB);
+      const getX = idx => pad + (idx / (historyPoints.length - 1)) * (width - (pad * 2));
+      const getY = w => height - pad - ((w - minW) / (maxW - minW || 1)) * (height - (pad * 2));
 
-      let polylinePoints = '';
-      let circles = '';
-      let labels = '';
+      let pathD = '';
+      let areaD = `M ${getX(0)} ${height - pad} `;
 
-      dataPoints.forEach((d, idx) => {
+      historyPoints.forEach((p, idx) => {
         const x = getX(idx);
-        const y = getY(d.weight);
-        polylinePoints += `${x},${y} `;
-        
-        circles += `
-          <circle cx="${x}" cy="${y}" r="4.5" fill="#10b981" stroke="#020617" stroke-width="2" class="cursor-pointer"/>
-          <text x="${x}" y="${y - 8}" font-size="9" font-weight="900" fill="#34d399" text-anchor="middle">${d.weight}</text>
-        `;
-
-        if (idx === 0 || idx === dataPoints.length - 1 || idx === Math.floor(dataPoints.length / 2)) {
-          labels += `
-            <text x="${x}" y="${height - 10}" font-size="9" font-weight="700" fill="#64748b" text-anchor="middle">${d.date}</text>
-          `;
+        const y = getY(p.weight);
+        if (idx === 0) {
+          pathD += `M ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        } else {
+          pathD += `L ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
         }
       });
 
-      const firstX = getX(0);
-      const lastX = getX(dataPoints.length - 1);
-      const baseFloorY = height - padB;
-      const areaPoints = `${firstX},${baseFloorY} ${polylinePoints} ${lastX},${baseFloorY}`;
+      areaD += `L ${getX(historyPoints.length - 1)} ${height - pad} Z`;
+
+      let dotsHTML = '';
+      historyPoints.forEach((p, idx) => {
+        const x = getX(idx);
+        const y = getY(p.weight);
+        dotsHTML += `
+          <circle cx="${x}" cy="${y}" r="4" fill="#34d399" stroke="#020617" stroke-width="2" />
+          <text x="${x}" y="${y - 8}" font-size="9" font-weight="900" fill="#f8fafc" text-anchor="middle" font-family="monospace">${p.weight}</text>
+        `;
+      });
 
       container.innerHTML = `
-        <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto select-none overflow-visible">
-          <defs>
-            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
-              <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
-            </linearGradient>
-          </defs>
-
-          <line x1="${padL}" y1="${padT}" x2="${width - padR}" y2="${padT}" stroke="#1e293b" stroke-dasharray="3,3" />
-          <line x1="${padL}" y1="${(padT + baseFloorY)/2}" x2="${width - padR}" y2="${(padT + baseFloorY)/2}" stroke="#1e293b" stroke-dasharray="3,3" />
-          <line x1="${padL}" y1="${baseFloorY}" x2="${width - padR}" y2="${baseFloorY}" stroke="#334155" />
-
-          <text x="${padL - 6}" y="${padT + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${maxW}</text>
-          <text x="${padL - 6}" y="${baseFloorY + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${minW}</text>
-
-          <polygon points="${areaPoints}" fill="url(#chartGrad)" />
-          <polyline fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polylinePoints}" />
-
-          ${circles}
-          ${labels}
-        </svg>
+        <div class="relative w-full overflow-hidden">
+          <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto overflow-visible">
+            <defs>
+              <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" />
+              </linearGradient>
+            </defs>
+            <!-- Area Fill -->
+            <path d="${areaD}" fill="url(#chartGlow)" />
+            <!-- Line Stroke -->
+            <path d="${pathD}" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- Data Dots -->
+            ${dotsHTML}
+          </svg>
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1 px-1">
+            <span>${formatShortDate(new Date(historyPoints[0].date))}</span>
+            <span>${formatShortDate(new Date(historyPoints[historyPoints.length - 1].date))}</span>
+          </div>
+        </div>
       `;
     }
 
-    function renderMacroVolumeBreakdown() {
+    function renderMacroVolumeDistribution() {
       const container = document.getElementById('macro-volume-bars');
       const badge = document.getElementById('chart-total-sets-badge');
-      container.innerHTML = '';
+      if (!container) return;
 
-      const muscleCounts = {
+      const groupCounts = {
         'Chest': 0,
-        'Back & Lats': 0,
-        'Shoulders / Delts': 0,
-        'Arms (Biceps/Triceps)': 0,
+        'Back': 0,
+        'Shoulders': 0,
+        'Arms': 0,
         'Quads & Glutes': 0,
         'Hamstrings': 0,
-        'Core / Abs': 0
+        'Core': 0
       };
 
-      let totalSetsLogged = 0;
+      let totalSets = 0;
 
-      appState.logs.forEach(l => {
-        l.exercises.forEach(ex => {
-          const name = ex.name.toLowerCase();
-          const setCount = ex.sets.length;
-          totalSetsLogged += setCount;
+      (appState.logs || []).forEach(log => {
+        log.exercises.forEach(ex => {
+          const target = (ex.target || '').toLowerCase();
+          const name = (ex.name || '').toLowerCase();
+          const sets = (ex.sets || []).filter(s => s.completed).length;
 
-          if (name.includes('press') || name.includes('fly') || name.includes('chest')) {
-            if (name.includes('shoulder')) muscleCounts['Shoulders / Delts'] += setCount;
-            else muscleCounts['Chest'] += setCount;
-          } else if (name.includes('row') || name.includes('lat') || name.includes('superman') || name.includes('pull')) {
-            muscleCounts['Back & Lats'] += setCount;
-          } else if (name.includes('lateral') || name.includes('delt') || name.includes('shoulder')) {
-            muscleCounts['Shoulders / Delts'] += setCount;
-          } else if (name.includes('curl') || name.includes('triceps') || name.includes('arm')) {
-            muscleCounts['Arms (Biceps/Triceps)'] += setCount;
-          } else if (name.includes('squat') || name.includes('lunge') || name.includes('step-up') || name.includes('thrust')) {
-            muscleCounts['Quads & Glutes'] += setCount;
-          } else if (name.includes('deadlift') || name.includes('rdl') || name.includes('leg curl') || name.includes('hamstring')) {
-            muscleCounts['Hamstrings'] += setCount;
-          } else if (name.includes('calf')) {
-            muscleCounts['Quads & Glutes'] += setCount;
+          if (sets === 0) return;
+          totalSets += sets;
+
+          if (target.includes('chest') || name.includes('press') || name.includes('flye')) {
+            groupCounts['Chest'] += sets;
+          } else if (target.includes('lat') || target.includes('back') || name.includes('row')) {
+            groupCounts['Back'] += sets;
+          } else if (target.includes('delt') || target.includes('shoulder')) {
+            groupCounts['Shoulders'] += sets;
+          } else if (target.includes('bicep') || target.includes('tricep') || name.includes('curl')) {
+            groupCounts['Arms'] += sets;
+          } else if (target.includes('quad') || target.includes('squat') || target.includes('glute')) {
+            groupCounts['Quads & Glutes'] += sets;
+          } else if (target.includes('hamstring') || target.includes('rdl') || target.includes('deadlift')) {
+            groupCounts['Hamstrings'] += sets;
           } else {
-            muscleCounts['Core / Abs'] += setCount;
+            groupCounts['Core'] += sets;
           }
         });
       });
 
-      badge.innerText = `${totalSetsLogged} Sets Logged`;
+      if (badge) badge.innerText = `${totalSets} Sets Logged`;
+      container.innerHTML = '';
 
-      if (totalSetsLogged === 0) {
-        container.innerHTML = `<span class="text-xs text-slate-500">Log workouts to view macro volume balance.</span>`;
+      if (totalSets === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 py-3 text-center">Log workouts to view muscle volume balance.</p>';
         return;
       }
 
-      Object.entries(muscleCounts).forEach(([muscle, count]) => {
-        const pct = Math.round((count / totalSetsLogged) * 100);
+      Object.keys(groupCounts).forEach(group => {
+        const count = groupCounts[group];
+        const pct = Math.round((count / (totalSets || 1)) * 100);
+
         const row = document.createElement('div');
         row.className = "space-y-1";
         row.innerHTML = `
-          <div class="flex justify-between text-xs">
-            <span class="font-bold text-slate-300">${muscle}</span>
-            <span class="text-slate-400 font-mono font-bold">${count} sets (${pct}%)</span>
+          <div class="flex items-center justify-between text-xs font-bold">
+            <span class="text-slate-300">${group}</span>
+            <span class="text-slate-400 font-mono text-[11px]">${count} sets (${pct}%)</span>
           </div>
-          <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-            <div class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+          <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+            <div class="bg-brand-500 h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
           </div>
         `;
         container.appendChild(row);
@@ -1937,72 +1957,383 @@
     }
 
     function renderSettingsView() {
+      updateGreetings();
       const list = document.getElementById('settings-routines-list');
+      if (!list) return;
+
       list.innerHTML = '';
-
-      const banterToggle = document.getElementById('toggle-banter');
-      if (banterToggle) banterToggle.checked = appState.banterEnabled !== false;
-
-      if (appState.presets.length === 0) {
-        list.innerHTML = `<div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-center text-xs text-slate-500">No workout splits currently saved.</div>`;
-        return;
-      }
-
-      appState.presets.forEach(p => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs";
-        
-        const safeName = p.name.replace(/'/g, "\\'");
-        item.innerHTML = `
+      appState.presets.forEach((preset, idx) => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3";
+        row.innerHTML = `
           <div>
-            <span class="font-bold text-white block">${p.name}</span>
-            <span class="text-[10px] text-slate-500">${p.exercises.length} Exercises</span>
+            <span class="text-xs font-bold text-white block">${preset.name}</span>
+            <span class="text-[10px] text-slate-400 font-medium">${preset.exercises.length} exercises</span>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="openEditSplitModal('${p.id}')" class="text-xs text-slate-300 hover:text-white font-bold px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 active:scale-95 transition-all">
+          <div class="flex items-center gap-2">
+            <button onclick="openEditSplitModal(${idx})" class="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-brand-400 font-bold text-xs active:scale-95">
               Edit
             </button>
-            <button onclick="confirmDeletePreset('${p.id}', '${safeName}')" class="text-xs text-red-400 hover:text-red-300 font-bold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 active:scale-95 transition-all">
+            <button onclick="confirmDeletePreset(${idx})" class="px-2.5 py-1 rounded-xl bg-red-500/10 text-red-400 font-bold text-xs active:scale-95">
               Delete
             </button>
           </div>
         `;
-        list.appendChild(item);
+        list.appendChild(row);
       });
     }
 
-    function confirmDeletePreset(id, name) {
-      showConfirm("Delete Split?", `Are you sure you want to delete "${name}"?`, () => {
-        appState.presets = appState.presets.filter(p => p.id !== id);
-        saveState();
-        renderSettingsView();
-        renderDashboard();
+    function toggleBanterSetting(checked) {
+      appState.banterEnabled = checked;
+      saveState();
+    }
+
+    function openEditSplitModal(idx) {
+      editingSplitIndex = idx;
+      const preset = appState.presets[idx];
+      if (!preset) return;
+
+      const modal = document.getElementById('modal-edit-split');
+      const nameInput = document.getElementById('input-edit-split-name');
+      const targetInput = document.getElementById('input-edit-split-target');
+
+      if (nameInput) nameInput.value = preset.name;
+      if (targetInput) targetInput.value = preset.subtitle || '';
+
+      renderEditSplitExercises(preset.exercises);
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeEditSplitModal() {
+      const modal = document.getElementById('modal-edit-split');
+      if (modal) modal.classList.add('hidden');
+      editingSplitIndex = null;
+    }
+
+    function renderEditSplitExercises(exercises) {
+      const list = document.getElementById('edit-split-exercise-list');
+      if (!list) return;
+
+      list.innerHTML = '';
+      exercises.forEach((ex, idx) => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs";
+        row.innerHTML = `
+          <div class="flex items-center gap-2 truncate pr-2">
+            <span class="font-bold text-white">${ex.name}</span>
+            <span class="text-[10px] text-slate-500 font-medium">(${ex.target || 'Movement'})</span>
+          </div>
+          <button onclick="removeExerciseFromEditSplit(${idx})" class="text-slate-500 hover:text-red-400 font-bold px-1 active:scale-90">
+            ✕
+          </button>
+        `;
+        list.appendChild(row);
       });
     }
 
-    function confirmResetToOriginal() {
-      showConfirm("Reset App to Original State?", "This will restore the 4 default splits, remove custom splits, and reset workout history.", () => {
-        appState.presets = JSON.parse(JSON.stringify(DEFAULT_PRESETS));
-        appState.logs = [];
-        appState.defaultTimer = 90;
-        appState.unit = "kg";
-        saveState();
-        updateGreetings();
-        renderDashboard();
-        renderSettingsView();
-        renderLogView();
+    function removeExerciseFromEditSplit(exIdx) {
+      if (editingSplitIndex === null) return;
+      appState.presets[editingSplitIndex].exercises.splice(exIdx, 1);
+      renderEditSplitExercises(appState.presets[editingSplitIndex].exercises);
+    }
+
+    function appendEditSplitExerciseRow() {
+      if (editingSplitIndex === null) return;
+      const nameInput = document.getElementById('input-edit-split-add-name');
+      const name = nameInput ? nameInput.value.trim() : '';
+      if (!name) return;
+
+      appState.presets[editingSplitIndex].exercises.push({
+        name: name,
+        target: "General"
       });
+
+      if (nameInput) nameInput.value = '';
+      renderEditSplitExercises(appState.presets[editingSplitIndex].exercises);
+    }
+
+    function saveEditedSplit() {
+      if (editingSplitIndex === null) return;
+      const nameInput = document.getElementById('input-edit-split-name');
+      const targetInput = document.getElementById('input-edit-split-target');
+
+      if (nameInput && nameInput.value.trim()) {
+        appState.presets[editingSplitIndex].name = nameInput.value.trim();
+      }
+      if (targetInput) {
+        appState.presets[editingSplitIndex].subtitle = targetInput.value.trim();
+      }
+
+      saveState();
+      closeEditSplitModal();
+      renderDashboard();
+      renderSettingsView();
+    }
+
+    let newSplitTempExercises = [];
+
+    function openNewSplitModal() {
+      newSplitTempExercises = [];
+      const modal = document.getElementById('modal-new-split');
+      const nameInput = document.getElementById('input-split-name');
+      const targetInput = document.getElementById('input-split-target');
+      if (nameInput) nameInput.value = '';
+      if (targetInput) targetInput.value = '';
+      renderNewSplitExercises();
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeNewSplitModal() {
+      const modal = document.getElementById('modal-new-split');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderNewSplitExercises() {
+      const list = document.getElementById('new-split-exercise-list');
+      if (!list) return;
+      list.innerHTML = '';
+      newSplitTempExercises.forEach((ex, idx) => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs";
+        row.innerHTML = `
+          <span class="font-bold text-white truncate pr-2">${ex.name}</span>
+          <button onclick="removeTempExercise(${idx})" class="text-slate-500 hover:text-red-400 font-bold px-1 active:scale-90">✕</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function appendExerciseRow() {
+      const input = document.getElementById('input-add-exercise-name');
+      const name = input ? input.value.trim() : '';
+      if (!name) return;
+      newSplitTempExercises.push({ name: name, target: 'Accessory' });
+      if (input) input.value = '';
+      renderNewSplitExercises();
+    }
+
+    function removeTempExercise(idx) {
+      newSplitTempExercises.splice(idx, 1);
+      renderNewSplitExercises();
+    }
+
+    function saveNewSplit() {
+      const nameInput = document.getElementById('input-split-name');
+      const targetInput = document.getElementById('input-split-target');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const target = targetInput ? targetInput.value.trim() : '';
+
+      if (!name) return;
+
+      const newPreset = {
+        id: "custom_" + Date.now(),
+        name: name,
+        subtitle: target || `${newSplitTempExercises.length} Movements`,
+        icon: "⚡",
+        color: "from-slate-900 via-emerald-950/40 to-slate-900",
+        border: "border-emerald-500/30",
+        exercises: newSplitTempExercises.length > 0 ? newSplitTempExercises : [{ name: "Bench Press", target: "Chest" }]
+      };
+
+      appState.presets.push(newPreset);
+      saveState();
+      closeNewSplitModal();
+      renderDashboard();
+      renderSettingsView();
+    }
+
+    function confirmDeletePreset(idx) {
+      showConfirmModal(
+        "Delete Split?",
+        `Are you sure you want to delete "${appState.presets[idx].name}"?`,
+        () => {
+          appState.presets.splice(idx, 1);
+          saveState();
+          renderDashboard();
+          renderSettingsView();
+        }
+      );
+    }
+
+    function openTimerModal() {
+      const modal = document.getElementById('modal-edit-timer');
+      const input = document.getElementById('input-edit-timer');
+      if (input) input.value = appState.defaultTimer || 90;
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+      }
+    }
+
+    function closeTimerModal() {
+      const modal = document.getElementById('modal-edit-timer');
+      if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      }
+    }
+
+    function quickSetTimer(val) {
+      const input = document.getElementById('input-edit-timer');
+      if (input) input.value = val;
+    }
+
+    function saveTimerModal() {
+      const input = document.getElementById('input-edit-timer');
+      const val = parseInt(input ? input.value : 90) || 90;
+      appState.defaultTimer = Math.max(5, Math.min(900, val));
+      saveState();
+      closeTimerModal();
+    }
+
+    function showConfirmModal(title, desc, onConfirm) {
+      const modal = document.getElementById('modal-confirm');
+      const box = document.getElementById('modal-confirm-box');
+      const titleEl = document.getElementById('confirm-title');
+      const descEl = document.getElementById('confirm-desc');
+      const btnYes = document.getElementById('btn-confirm-yes');
+      const btnNo = document.getElementById('btn-confirm-no');
+
+      if (titleEl) titleEl.innerText = title;
+      if (descEl) descEl.innerText = desc;
+
+      const cleanup = () => {
+        if (box) box.classList.add('scale-95');
+        if (modal) {
+          modal.classList.add('opacity-0');
+          setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+      };
+
+      if (btnYes) {
+        btnYes.onclick = () => {
+          cleanup();
+          if (onConfirm) onConfirm();
+        };
+      }
+      if (btnNo) {
+        btnNo.onclick = cleanup;
+      }
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        if (box) box.classList.remove('scale-95');
+      }
     }
 
     function confirmClearAllData() {
-      showConfirm("Wipe Workout History?", "This will clear all logged sets and history, but your splits will remain untouched.", () => {
-        appState.logs = [];
-        saveState();
-        renderLogView();
-      });
+      showConfirmModal(
+        "Clear All Logs?",
+        "This will permanently erase all workout history and charts data. This cannot be undone.",
+        () => {
+          appState.logs = [];
+          saveState();
+          renderLogHistory();
+          renderLogCharts();
+        }
+      );
     }
 
-    window.onload = initApp;
+    function confirmResetToOriginal() {
+      showConfirmModal(
+        "Reset Default Splits?",
+        "This restores the original default splits (Upper A/B, Lower A/B).",
+        () => {
+          appState.presets = JSON.parse(JSON.stringify(DEFAULT_PRESETS));
+          saveState();
+          renderDashboard();
+          renderSettingsView();
+        }
+      );
+    }
+
+    function exportDataJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `irontrack_backup_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function exportDataCSV() {
+      if (!appState.logs || appState.logs.length === 0) return;
+      let csv = "Date,Workout,Exercise,Set,Weight,Reps,Unit\n";
+      appState.logs.forEach(log => {
+        const d = log.date.slice(0, 10);
+        log.exercises.forEach(ex => {
+          ex.sets.forEach((s, idx) => {
+            if (s.completed) {
+              csv += `"${d}","${log.presetName}","${ex.name}",${idx + 1},${s.weight},${s.reps},"${appState.unit}"\n`;
+            }
+          });
+        });
+      });
+      const dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `irontrack_export_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importDataJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.presets)) {
+            appState = parsed;
+            saveState();
+            initApp();
+          }
+        } catch (err) {
+          console.error("Invalid backup file", err);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function requestScreenWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.warn("WakeLock request notice:", err);
+      }
+    }
+
+    function releaseScreenWakeLock() {
+      if (wakeLock) {
+        try {
+          wakeLock.release();
+          wakeLock = null;
+        } catch (e) {
+          console.warn("WakeLock release notice:", e);
+        }
+      }
+    }
+
+    function formatShortDate(d) {
+      const date = new Date(d);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function formatReadableDate(d) {
+      const date = new Date(d);
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    // Launch Application
+    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
