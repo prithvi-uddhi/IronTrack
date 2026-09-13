@@ -53,9 +53,9 @@
     .nav-safe-bottom {
       padding-bottom: max(var(--sab), 0.65rem);
     }
-    input, textarea {
+    input, textarea, select {
       user-select: text;
-      font-size: 16px !important; /* Prevents auto-zoom on iOS browsers */
+      font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
     }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button {
@@ -72,20 +72,19 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    
-    @keyframes slideDownIn {
-      0% { transform: translateY(-150%); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
+    @keyframes pulseAlarm {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.65; transform: scale(1.03); }
     }
-    @keyframes slideUpOut {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(-150%); opacity: 0; }
+    .alarm-pulsing {
+      animation: pulseAlarm 0.8s ease-in-out infinite;
     }
-    .toast-enter {
-      animation: slideDownIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    @keyframes modalSlideIn {
+      0% { transform: scale(0.92) translateY(20px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
     }
-    .toast-exit {
-      animation: slideUpOut 0.24s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+    .modal-enter {
+      animation: modalSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
 </head>
@@ -93,7 +92,7 @@
 
   <!-- 1. First-Launch Onboarding Modal -->
   <div id="modal-onboarding" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-3xl flex items-center justify-center p-6 hidden">
-    <div class="w-full max-w-sm space-y-7 text-center animate-[slideDownIn_0.4s_ease-out]">
+    <div class="w-full max-w-sm space-y-7 text-center modal-enter">
       <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-brand-500 to-emerald-400 flex items-center justify-center text-4xl shadow-2xl shadow-brand-500/20">
         ⚡
       </div>
@@ -113,8 +112,8 @@
     </div>
   </div>
 
-  <!-- 2. Reusable Confirmation Modal (Never uses browser alerts) -->
-  <div id="modal-confirm" class="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+  <!-- 2. Reusable Confirmation Modal -->
+  <div id="modal-confirm" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
     <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-3xl p-6 space-y-6 shadow-2xl transform scale-95 transition-transform duration-200" id="modal-confirm-box">
       <div class="text-center space-y-2">
         <h3 class="font-black text-lg text-white" id="confirm-title">Discard Session?</h3>
@@ -127,13 +126,22 @@
     </div>
   </div>
 
-  <!-- 3. Fast Pop-and-Fly Gym Banter Toast (2.8s auto-dismiss) -->
-  <div id="toast-banter" class="fixed top-3 left-4 right-4 z-[90] pointer-events-none hidden">
-    <div id="toast-banter-card" class="max-w-md mx-auto rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 border backdrop-blur-xl pointer-events-auto">
-      <span id="toast-banter-icon" class="text-2xl flex-shrink-0">🔥</span>
-      <div class="flex-1 min-w-0">
-        <span id="toast-banter-title" class="text-[9px] uppercase tracking-widest font-black opacity-80 block"></span>
-        <p id="toast-banter-text" class="text-xs sm:text-sm font-bold leading-tight text-white line-clamp-2"></p>
+  <!-- 3. Full-Screen Motivational Coach Modal (Glanceable, Notch-Safe) -->
+  <div id="modal-coach" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-sm text-center space-y-6 transform scale-95 transition-transform duration-200" id="modal-coach-box">
+      <div id="coach-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border bg-brand-500/10 border-brand-500/30 text-brand-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        <span id="coach-pill-text">COACH ALERT</span>
+      </div>
+      <div class="space-y-3">
+        <div id="coach-icon" class="text-6xl select-none filter drop-shadow-md">⚡</div>
+        <h2 id="coach-headline" class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight uppercase">LIGHT WEIGHT BABY!</h2>
+        <p id="coach-message" class="text-slate-300 text-sm sm:text-base font-medium leading-relaxed px-2"></p>
+      </div>
+      <div class="pt-2">
+        <button onclick="dismissCoachModal()" id="btn-coach-action" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-400 active:scale-95 text-slate-950 font-black text-sm tracking-wider uppercase transition-all shadow-xl shadow-brand-500/20">
+          Lock In & Continue →
+        </button>
       </div>
     </div>
   </div>
@@ -216,7 +224,6 @@
         </div>
         <p id="dashboard-user-greeting" class="text-xs text-slate-400 font-medium mt-0.5">Let's lock in, dawg</p>
       </div>
-      <!-- Single Clean + New Split Header Button -->
       <button onclick="openNewSplitModal()" class="text-xs font-black bg-slate-900 border border-slate-800 hover:border-brand-500/50 text-white px-3.5 py-2 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
         <span class="text-brand-400 text-sm font-bold">+</span>
         <span>New Split</span>
@@ -229,7 +236,7 @@
         <span id="split-count-badge" class="text-[10px] font-bold text-slate-500">4 available</span>
       </div>
       <div class="grid grid-cols-2 gap-3" id="dashboard-routines">
-        <!-- Split Tiles injected dynamically in 2x2 grid -->
+        <!-- Split Tiles injected dynamically -->
       </div>
     </div>
   </main>
@@ -240,13 +247,12 @@
   <main id="view-session" class="flex-1 flex flex-col h-full w-full max-w-xl mx-auto hidden bg-slate-950 overflow-hidden">
     <header class="px-4 py-3 flex items-center justify-between border-b border-slate-800 bg-slate-950/95 backdrop-blur-xl z-20">
       <div class="flex items-center gap-3">
-        <!-- Silent Back Button: Exits instantly if 0 sets recorded; warns only if workout was done -->
         <button onclick="handleBackClick()" class="w-10 h-10 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white active:scale-90 transition-transform">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
         </button>
         <div>
           <h2 id="session-title" class="font-black text-base sm:text-lg text-white leading-tight">Routine Name</h2>
-          <p id="session-subtitle" class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">7 Movements Ready</p>
+          <p id="session-subtitle" class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">Movements Ready</p>
         </div>
       </div>
       <button onclick="finishSession()" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-1.5">
@@ -256,73 +262,75 @@
     </header>
 
     <div class="flex-1 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4" id="session-exercises">
-      <!-- Exercise cards with inline timers injected here -->
+      <!-- Exercise cards with inline timers and live set counts injected here -->
     </div>
   </main>
 
   <!-- ========================================== -->
-  <!-- 2. VIEW: LOG / HISTORY                     -->
+  <!-- 2. VIEW: LOG / HISTORY & CHARTS            -->
   <!-- ========================================== -->
   <main id="view-log" class="flex-1 flex flex-col h-full w-full max-w-xl mx-auto hidden overflow-hidden">
-    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 space-y-3">
+    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 space-y-3 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-xl font-black tracking-tight text-white">Workout Log</h1>
-          <p class="text-xs text-slate-400 font-medium">Track progressive overload</p>
+          <p class="text-xs text-slate-400 font-medium">History & Progressive Overload</p>
         </div>
+        <!-- Master Sub-Toggle: History vs Charts -->
         <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl text-xs font-bold">
-          <button id="btn-log-toggle-weekly" onclick="switchLogSubView('weekly')" class="px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all">Weekly</button>
-          <button id="btn-log-toggle-monthly" onclick="switchLogSubView('monthly')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all">Monthly</button>
+          <button id="btn-log-mode-history" onclick="switchLogMainMode('history')" class="px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all">History</button>
+          <button id="btn-log-mode-charts" onclick="switchLogMainMode('charts')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all">Charts</button>
         </div>
       </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4">
-      <!-- Weekly View -->
-      <div id="log-subview-weekly" class="space-y-4">
-        <!-- Week Navigator -->
-        <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-          <button onclick="shiftWeek(-1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">‹</button>
-          <div class="text-center">
-            <span id="log-week-range" class="text-xs font-black text-white block">This Week</span>
-            <span id="log-week-stats" class="text-[10px] text-brand-400 font-bold">0 Workouts • 0 kg volume</span>
+    <!-- CONTAINER A: HISTORY SUBVIEW -->
+    <div id="log-section-history" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4">
+      <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-2xl">
+        <button onclick="shiftWeek(-1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">‹</button>
+        <div class="text-center">
+          <span id="log-week-range" class="text-xs font-black text-white block">This Week</span>
+          <span id="log-week-stats" class="text-[10px] text-brand-400 font-bold">0 Workouts • 0 kg volume</span>
+        </div>
+        <button onclick="shiftWeek(1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">›</button>
+      </div>
+
+      <div id="weekly-sessions-list" class="space-y-3">
+        <!-- Collapsible session cards rendered here -->
+      </div>
+    </div>
+
+    <!-- CONTAINER B: CHARTS & PROGRESSION ANALYTICS SUBVIEW -->
+    <div id="log-section-charts" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-5 hidden">
+      <!-- Tier 1: Micro Lift Overload Progression (SVG Interactive Curve) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Micro Progression</span>
+            <h3 class="text-sm font-black text-white">Lift Progression Curve</h3>
           </div>
-          <button onclick="shiftWeek(1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">›</button>
+          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="bg-slate-950 border border-slate-800 text-xs font-bold text-white rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-brand-500 max-w-[160px] truncate">
+            <!-- Populated dynamically with all tracked exercises -->
+          </select>
         </div>
 
-        <div id="weekly-sessions-list" class="space-y-3">
-          <!-- Weekly logs injected here -->
+        <div id="chart-svg-container" class="w-full relative pt-1">
+          <!-- Dynamic SVG Line Chart rendered here -->
         </div>
       </div>
 
-      <!-- Monthly View -->
-      <div id="log-subview-monthly" class="space-y-4 hidden">
-        <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-          <button onclick="shiftMonth(-1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">‹</button>
-          <span id="log-month-title" class="text-xs font-black text-white">Month 2026</span>
-          <button onclick="shiftMonth(1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">›</button>
+      <!-- Tier 2: Macro Muscle Group Volume Distribution -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Macro Balance</span>
+            <h3 class="text-sm font-black text-white">Muscle Group Volume</h3>
+          </div>
+          <span id="chart-total-sets-badge" class="text-[10px] font-bold text-slate-400 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">0 Sets Logged</span>
         </div>
 
-        <!-- Monthly Mini Heatmap -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-300">Workout Days</span>
-            <span id="monthly-count-summary" class="text-[10px] font-bold text-brand-400">0 sessions</span>
-          </div>
-          <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] font-bold text-slate-500 mb-1">
-            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-          </div>
-          <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-1.5">
-            <!-- Heatmap days injected here -->
-          </div>
-        </div>
-
-        <!-- Monthly Split Distribution -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
-          <span class="text-xs font-bold text-slate-300 block mb-2">Routines Completed</span>
-          <div id="monthly-routine-stats" class="space-y-2">
-            <!-- Dynamic routine percentages -->
-          </div>
+        <div id="macro-volume-bars" class="space-y-3 pt-1">
+          <!-- Muscle group distribution bars rendered here -->
         </div>
       </div>
     </div>
@@ -365,8 +373,8 @@
         <!-- Gym Bro Banter Toggle -->
         <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
           <div class="pr-3">
-            <span class="text-xs font-bold text-white block">Gym Bro Banter</span>
-            <span class="text-[10px] text-slate-400 leading-tight block">Roasts, plateaus & PR hype notifications</span>
+            <span class="text-xs font-bold text-white block">Coach Mentality</span>
+            <span class="text-[10px] text-slate-400 leading-tight block">PR alerts, final-set urgency & plateau checks</span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
             <input type="checkbox" id="toggle-banter" onchange="toggleBanterSetting(this.checked)" class="sr-only peer">
@@ -375,7 +383,7 @@
         </div>
       </div>
 
-      <!-- Split Management (Full Freedom: Every routine can be deleted) -->
+      <!-- Split Management -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Manage Workout Splits</span>
@@ -422,7 +430,7 @@
   </main>
 
   <!-- ========================================== -->
-  <!-- DEDICATED BOTTOM NAVIGATION BAR (APP SHELL)-->
+  <!-- DEDICATED BOTTOM NAVIGATION BAR            -->
   <!-- ========================================== -->
   <nav id="app-bottom-nav" class="flex-shrink-0 w-full z-40 bg-slate-900/95 border-t border-slate-800/80 backdrop-blur-xl shadow-[0_-8px_25px_rgba(0,0,0,0.5)] nav-safe-bottom">
     <div class="max-w-xl mx-auto flex items-center justify-around px-2 pt-1.5">
@@ -454,7 +462,6 @@
   </nav>
 
   <script>
-    // 4 Master Preset Routines
     const DEFAULT_PRESETS = [
       {
         id: "upper_a",
@@ -525,47 +532,109 @@
       }
     ];
 
-    const BANTER = {
-      hype: [
-        "LIGHT WEIGHT BABY! Somebody stop this beast!",
-        "The sleeves can't take much more of this, dawg.",
-        "New PR unlocked! That’s anabolic growth."
-      ],
-      plateau: [
-        "Same weight, same reps? We maintaining or lifting, dawg??",
-        "Ctrl+C, Ctrl+V workout detected. Add a plate next time!",
-        "Muscles taking a nap right now. Push for one more rep!"
-      ],
-      roast: [
-        "Did gravity get turned up today or what??",
-        "Who stole your protein shake, dawg?",
-        "We don't count warm-ups... was that a working set? 💀",
-        "Weights heavy today? Eat some carbs, king."
-      ]
-    };
-
-    // Clean, Zero-User-Data Initial State
     let appState = {
       userName: null,
       unit: "kg",
       defaultTimer: 90,
       banterEnabled: true,
       presets: JSON.parse(JSON.stringify(DEFAULT_PRESETS)),
-      logs: [] // Clean history on deployment
+      logs: []
     };
 
     let activeNavTab = "workout";
+    let logMainMode = "history"; // "history" or "charts"
     let activeSession = null;
     let wakeLock = null;
+    let expandedLogCards = new Set();
 
+    // High-Reliability Timestamp Timer & Continuous Alarm State
     let activeTimer = {
       exIndex: null,
+      targetEndTime: null,
       intervalId: null,
-      remaining: 0
+      remaining: 0,
+      isRinging: false,
+      ringLoopInterval: null
     };
 
     let currentWeekOffset = 0;
-    let currentMonthOffset = 0;
+    let audioCtx = null;
+
+    function unlockAudioEngine() {
+      try {
+        if ('audioSession' in navigator) {
+          navigator.audioSession.type = 'playback';
+        }
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } catch (e) {
+        console.warn("Audio unlock note:", e);
+      }
+    }
+
+    function playBeepCadence() {
+      unlockAudioEngine();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        
+        // Tone 1: High crisp chirp
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+        osc1.frequency.exponentialRampToValueAtTime(1100, now + 0.15);
+        gain1.gain.setValueAtTime(0.35, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.15);
+
+        // Tone 2: Affirming harmonic chime 120ms later
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(1320, now + 0.12);
+        osc2.frequency.exponentialRampToValueAtTime(1760, now + 0.32);
+        gain2.gain.setValueAtTime(0.30, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.35);
+      } catch (err) {
+        console.warn("Beep audio error:", err);
+      }
+    }
+
+    function startContinuousAlarm() {
+      activeTimer.isRinging = true;
+      playBeepCadence();
+      
+      if (activeTimer.ringLoopInterval) clearInterval(activeTimer.ringLoopInterval);
+      activeTimer.ringLoopInterval = setInterval(() => {
+        if (!activeTimer.isRinging) {
+          clearInterval(activeTimer.ringLoopInterval);
+          return;
+        }
+        playBeepCadence();
+      }, 1400);
+
+      renderSession();
+    }
+
+    function dismissAlarm() {
+      activeTimer.isRinging = false;
+      if (activeTimer.ringLoopInterval) clearInterval(activeTimer.ringLoopInterval);
+      activeTimer.ringLoopInterval = null;
+      stopTimer();
+      renderSession();
+    }
 
     function initApp() {
       loadState();
@@ -588,7 +657,6 @@
           appState.banterEnabled = parsed.banterEnabled !== undefined ? parsed.banterEnabled : true;
           appState.presets = (parsed.presets && parsed.presets.length > 0) ? parsed.presets : JSON.parse(JSON.stringify(DEFAULT_PRESETS));
           
-          // Ensure default splits have their clean concise subtitles if loaded from earlier versions
           appState.presets.forEach(p => {
             const defaultMatch = DEFAULT_PRESETS.find(d => d.id === p.id);
             if (defaultMatch && (!p.subtitle || p.subtitle.includes('Upper Chest') || p.subtitle.includes('Quads & Glutes'))) {
@@ -650,7 +718,6 @@
           appState.userName = val;
           saveState();
           updateGreetings();
-          showBanterToast('hype');
         }
       }
     }
@@ -666,10 +733,7 @@
     }
 
     function exportDataCSV() {
-      if (!appState.logs || appState.logs.length === 0) {
-        showBanterToast('roast');
-        return;
-      }
+      if (!appState.logs || appState.logs.length === 0) return;
       let csvContent = "data:text/csv;charset=utf-8,Date,Routine,Exercise,Set,Weight,Unit,Reps\n";
       appState.logs.forEach(log => {
         const dateStr = log.date.slice(0, 10);
@@ -709,7 +773,6 @@
             renderDashboard();
             renderSettingsView();
             renderLogView();
-            showBanterToast('hype');
           }
         } catch (err) {
           console.error("Failed to parse backup JSON", err);
@@ -806,49 +869,38 @@
       confirmCallback = null;
     }
 
-    // Fast 2.8s Banter Toast Engine
-    let toastTimeout = null;
-    function showBanterToast(type) {
+    function showCoachModal(pillText, icon, headline, message, actionText, pillStyle, btnStyle) {
       if (appState.banterEnabled === false) return;
-      
-      const toast = document.getElementById('toast-banter');
-      const card = document.getElementById('toast-banter-card');
-      const titleEl = document.getElementById('toast-banter-title');
-      const textEl = document.getElementById('toast-banter-text');
-      const iconEl = document.getElementById('toast-banter-icon');
 
-      let textArray, title, icon, colorClasses;
-      
-      if (type === 'hype') {
-        textArray = BANTER.hype; title = "Progressive Overload"; icon = "🚀";
-        colorClasses = "bg-brand-500 border-brand-400 text-slate-950";
-      } else if (type === 'plateau') {
-        textArray = BANTER.plateau; title = "Plateau Check"; icon = "👀";
-        colorClasses = "bg-amber-500 border-amber-400 text-slate-950";
-      } else if (type === 'roast') {
-        textArray = BANTER.roast; title = "Locker Room Roast"; icon = "💀";
-        colorClasses = "bg-red-500 border-red-400 text-white";
-      } else {
-        return;
-      }
+      const modal = document.getElementById('modal-coach');
+      const box = document.getElementById('modal-coach-box');
+      const pill = document.getElementById('coach-pill');
+      const pillLabel = document.getElementById('coach-pill-text');
+      const iconEl = document.getElementById('coach-icon');
+      const headlineEl = document.getElementById('coach-headline');
+      const messageEl = document.getElementById('coach-message');
+      const actionBtn = document.getElementById('btn-coach-action');
 
-      const text = textArray[Math.floor(Math.random() * textArray.length)];
-      titleEl.innerText = title;
-      textEl.innerText = text;
+      pillLabel.innerText = pillText;
+      pill.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border ${pillStyle}`;
       iconEl.innerText = icon;
-      card.className = `max-w-md mx-auto rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 border pointer-events-auto ${colorClasses}`;
+      headlineEl.innerText = headline;
+      messageEl.innerText = message;
+      actionBtn.innerText = actionText;
+      actionBtn.className = `w-full py-4 rounded-2xl active:scale-95 font-black text-sm tracking-wider uppercase transition-all shadow-xl ${btnStyle}`;
 
-      clearTimeout(toastTimeout);
-      toast.classList.remove('hidden', 'toast-exit');
-      void toast.offsetWidth;
-      toast.classList.add('toast-enter');
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+    }
 
-      // Snappy 2.8-second auto-dismiss
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('toast-enter');
-        toast.classList.add('toast-exit');
-        setTimeout(() => toast.classList.add('hidden'), 240);
-      }, 2800);
+    function dismissCoachModal() {
+      const modal = document.getElementById('modal-coach');
+      const box = document.getElementById('modal-coach-box');
+      modal.classList.add('opacity-0');
+      box.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
     async function acquireWakeLock() {
@@ -871,25 +923,6 @@
         await acquireWakeLock();
       }
     });
-
-    // Web Audio Synthesizer (No external MP3 files needed)
-    function playBeep() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.35);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-        if (navigator.vibrate) navigator.vibrate([180, 80, 180]);
-      } catch (e) { /* ignore if audio blocked */ }
-    }
 
     function renderDashboard() {
       const container = document.getElementById('dashboard-routines');
@@ -941,29 +974,38 @@
               best = s;
             }
           });
-          return best;
+          return {
+            bestSet: best,
+            totalSetsLogged: ex.sets.length,
+            lastSet: ex.sets[ex.sets.length - 1]
+          };
         }
       }
       return null;
     }
 
     function startSession(preset) {
+      unlockAudioEngine();
       activeSession = {
         routineId: preset.id,
         name: preset.name,
         exercises: preset.exercises.map(ex => {
           const hist = getHistory(ex.name);
-          const baseW = hist ? hist.weight : '';
-          const baseR = hist ? hist.reps : '';
+          const baseW = hist ? hist.bestSet.weight : '';
+          const baseR = hist ? hist.bestSet.reps : '';
+          
+          // Adaptive sets: Baseline is 3, or adjusts to previous workout volume
+          const initialSetCount = hist ? Math.min(Math.max(hist.totalSetsLogged, 2), 6) : 3;
+          const initialSets = [];
+          for (let s = 0; s < initialSetCount; s++) {
+            initialSets.push({ weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false });
+          }
+
           return {
             name: ex.name,
             target: ex.target || 'General',
-            history: hist,
-            sets: [
-              { weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false },
-              { weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false },
-              { weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false }
-            ]
+            history: hist ? hist.bestSet : null,
+            sets: initialSets
           };
         })
       };
@@ -991,7 +1033,6 @@
         completedSets += ex.sets.filter(s => s.completed).length;
       });
 
-      // Silent instant exit if 0 sets recorded
       if (completedSets === 0) {
         exitSession();
         if (onExitConfirmed) onExitConfirmed();
@@ -1004,13 +1045,14 @@
     }
 
     function exitSession() {
+      dismissAlarm();
       activeSession = null;
-      stopTimer();
       releaseWakeLock();
       proceedSwitchTab(activeNavTab);
     }
 
     function finishSession() {
+      dismissAlarm();
       const validExercises = activeSession.exercises.map(ex => {
         return {
           name: ex.name,
@@ -1033,7 +1075,15 @@
       saveState();
 
       exitSession();
-      showBanterToast('hype');
+      showCoachModal(
+        "WORKOUT COMPLETE",
+        "🏆",
+        "SESSION DESTROYED!",
+        "Every single rep was an investment in strength. Hydrate, eat your protein, and rest up.",
+        "View Workout Log →",
+        "bg-brand-500/10 border-brand-500/30 text-brand-400",
+        "bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-brand-500/25"
+      );
     }
 
     function renderSession() {
@@ -1045,6 +1095,9 @@
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-sm space-y-3";
         
         let histText = ex.history ? `Last: ${ex.history.weight} ${appState.unit} × ${ex.history.reps}` : `First time tracking`;
+        
+        const completedCount = ex.sets.filter(s => s.completed).length;
+        const totalCount = ex.sets.length;
 
         let setsHTML = '';
         ex.sets.forEach((set, setIdx) => {
@@ -1079,18 +1132,45 @@
           `;
         });
 
-        // Inline direct-tap timer positioned between Add Set and Remove Set
+        // Timer State & Ringing Logic
         const isTimerActiveHere = activeTimer.exIndex === exIdx && activeTimer.intervalId !== null;
-        const displayTime = isTimerActiveHere ? formatTime(activeTimer.remaining) : `${appState.defaultTimer}s`;
-        const timerIcon = isTimerActiveHere ? '■' : '▶';
-        const timerClass = isTimerActiveHere ? 'text-brand-400 border-brand-500/30 bg-brand-500/10' : 'text-slate-300 border-slate-800 bg-slate-950 hover:border-slate-700';
+        const isRingingHere = activeTimer.exIndex === exIdx && activeTimer.isRinging;
+
+        let timerDisplayHTML = '';
+        if (isRingingHere) {
+          timerDisplayHTML = `
+            <button onclick="dismissAlarm()" class="alarm-pulsing flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500 text-white font-black text-xs shadow-lg shadow-red-500/30 active:scale-95 transition-transform">
+              <span>🔔 TIME UP — TAP TO STOP</span>
+            </button>
+          `;
+        } else {
+          const displayTime = isTimerActiveHere ? formatTime(activeTimer.remaining) : `${appState.defaultTimer}s`;
+          const timerIcon = isTimerActiveHere ? '■' : '▶';
+          const timerClass = isTimerActiveHere ? 'text-brand-400 border-brand-500/30 bg-brand-500/10' : 'text-slate-300 border-slate-800 bg-slate-950 hover:border-slate-700';
+
+          timerDisplayHTML = `
+            <div class="flex items-center gap-1.5 border ${timerClass} rounded-full px-2.5 py-1 transition-colors">
+              <span class="text-xs">⏱️</span>
+              <span onclick="${isTimerActiveHere ? '' : 'openTimerModal()'}" class="text-xs font-black font-mono tracking-tight cursor-pointer px-1 text-slate-200" title="Tap to change rest duration" id="timer-display-${exIdx}">${displayTime}</span>
+              <button onclick="toggleTimer(${exIdx})" class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[9px] text-brand-400 active:scale-90 transition-transform">
+                ${timerIcon}
+              </button>
+            </div>
+          `;
+        }
 
         card.innerHTML = `
-          <div>
-            <h3 class="font-black text-base text-white tracking-tight">${ex.name}</h3>
-            <div class="flex items-center gap-1.5 mt-0.5">
-              <span class="text-[9px] uppercase font-bold text-brand-400 tracking-wider bg-brand-500/10 px-1.5 py-0.5 rounded">${ex.target}</span>
-              <span class="text-[10px] text-slate-500 font-medium">• ${histText}</span>
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-black text-base text-white tracking-tight">${ex.name}</h3>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[9px] uppercase font-bold text-brand-400 tracking-wider bg-brand-500/10 px-1.5 py-0.5 rounded">${ex.target}</span>
+                <span class="text-[10px] text-slate-500 font-medium">• ${histText}</span>
+              </div>
+            </div>
+            <!-- Dynamic Set Counter Badge -->
+            <div class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-300">
+              <span class="text-brand-400">${completedCount}</span> / ${totalCount} SETS
             </div>
           </div>
 
@@ -1098,20 +1178,13 @@
             ${setsHTML}
           </div>
 
-          <!-- Bottom Row: + Add Set | ⏱️ Timer (Tap digits to edit) | Remove Set -->
+          <!-- Bottom Action Bar: + Add Set | Inline Timer | Remove Set -->
           <div class="pt-3 flex items-center justify-between border-t border-slate-800/60">
             <button onclick="addSet(${exIdx})" class="text-xs font-bold text-brand-400 active:scale-95 py-1 px-1">
               + Add Set
             </button>
             
-            <div class="flex items-center gap-1.5 border ${timerClass} rounded-full px-2.5 py-1 transition-colors">
-              <span class="text-xs">⏱️</span>
-              <!-- Direct-tap to edit duration -->
-              <span onclick="${isTimerActiveHere ? '' : 'openTimerModal()'}" class="text-xs font-black font-mono tracking-tight cursor-pointer px-1 text-slate-200" title="Tap to change rest duration" id="timer-display-${exIdx}">${displayTime}</span>
-              <button onclick="toggleTimer(${exIdx})" class="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[9px] text-brand-400 active:scale-90 transition-transform">
-                ${timerIcon}
-              </button>
-            </div>
+            ${timerDisplayHTML}
 
             <button onclick="removeSet(${exIdx})" class="text-xs font-bold text-slate-500 hover:text-slate-400 active:scale-95 py-1 px-1 ${ex.sets.length > 1 ? '' : 'invisible'}">
               Remove Set
@@ -1127,6 +1200,7 @@
     }
 
     function toggleSet(exIdx, setIdx) {
+      unlockAudioEngine();
       const ex = activeSession.exercises[exIdx];
       const set = ex.sets[setIdx];
 
@@ -1136,17 +1210,16 @@
         return;
       }
 
-      // Approach B: Auto-adopt ghost values if inputs were left blank
+      // Approach B: Auto-adopt ghost values if left blank (1-tap fast logging)
       if ((set.weight === '' || set.weight === undefined) && set.ghostW !== '') set.weight = set.ghostW;
       if ((set.reps === '' || set.reps === undefined) && set.ghostR !== '') set.reps = set.ghostR;
       
-      // Fallback if completely fresh
       if (set.weight === '' || set.weight === undefined) set.weight = '10';
       if (set.reps === '' || set.reps === undefined) set.reps = '10';
 
       set.completed = true;
 
-      // Propagate ghost values to following unlogged sets
+      // Propagate ghost suggestions to upcoming sets
       for (let i = setIdx + 1; i < ex.sets.length; i++) {
         if (!ex.sets[i].completed) {
           ex.sets[i].ghostW = set.weight;
@@ -1154,25 +1227,70 @@
         }
       }
 
-      evalBanter(ex, set);
+      evalCoachTriggers(ex, set, exIdx);
       renderSession();
     }
 
-    function evalBanter(ex, set) {
-      if (!ex.history) return;
-      
+    function evalCoachTriggers(ex, set, exIdx) {
+      const completedSets = ex.sets.filter(s => s.completed).length;
+      const totalSets = ex.sets.length;
+      const setsRemaining = totalSets - completedSets;
+
       const cW = parseFloat(set.weight) || 0;
       const cR = parseFloat(set.reps) || 0;
-      const hW = parseFloat(ex.history.weight) || 0;
-      const hR = parseFloat(ex.history.reps) || 0;
 
-      if (cW > hW || (cW === hW && cR > hR)) {
-        showBanterToast('hype');
-      } else if (cW === hW && cR === hR) {
-        showBanterToast('plateau');
-      } else {
-        showBanterToast('roast');
+      // 1. High Impact: PR Smashed
+      if (ex.history) {
+        const hW = parseFloat(ex.history.weight) || 0;
+        const hR = parseFloat(ex.history.reps) || 0;
+        if (cW > hW || (cW === hW && cR > hR)) {
+          showCoachModal(
+            "NEW PR UNLOCKED",
+            "🚀",
+            "LIGHT WEIGHT BABY!",
+            `You shattered your previous mark of ${hW} ${appState.unit} × ${hR}. Keep this ruthless momentum going!`,
+            "Lock In & Keep Cooking →",
+            "bg-brand-500/10 border-brand-500/30 text-brand-400",
+            "bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-brand-500/25"
+          );
+          return;
+        }
       }
+
+      // 2. High Impact: Final Set Countdown (Penultimate completion)
+      if (setsRemaining === 1) {
+        showCoachModal(
+          "FINAL SET ALERT",
+          "🔥",
+          "EMPTY THE TANK!",
+          `Just 1 set left on ${ex.name}. Your perceived failure point is only at ~70% of true capacity. Give it everything!`,
+          `Lock In For Set ${totalCountOr(totalSets)} →`,
+          "bg-amber-500/10 border-amber-500/30 text-amber-400",
+          "bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/25"
+        );
+        return;
+      }
+
+      // 3. High Impact: Plateau Accountability Check
+      if (ex.history) {
+        const hW = parseFloat(ex.history.weight) || 0;
+        const hR = parseFloat(ex.history.reps) || 0;
+        if (cW === hW && cR === hR && completedSets === 1) {
+          showCoachModal(
+            "COACH CHECK-IN",
+            "👀",
+            "DEMAND MORE",
+            `You hit ${hW} ${appState.unit} × ${hR} last time. Don't settle for comfortable—demand that extra rep on Set 2!`,
+            "Got It, One More Rep →",
+            "bg-red-500/10 border-red-500/30 text-red-400",
+            "bg-red-500 hover:bg-red-400 text-white shadow-red-500/25"
+          );
+        }
+      }
+    }
+
+    function totalCountOr(val) {
+      return val || 3;
     }
 
     function addSet(exIdx) {
@@ -1197,7 +1315,7 @@
 
     function formatTime(secs) {
       const m = Math.floor(secs / 60);
-      const s = secs % 60;
+      const s = Math.max(0, secs % 60);
       return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     }
 
@@ -1205,9 +1323,11 @@
       if (activeTimer.intervalId) clearInterval(activeTimer.intervalId);
       activeTimer.intervalId = null;
       activeTimer.exIndex = null;
+      activeTimer.targetEndTime = null;
     }
 
     function toggleTimer(exIdx) {
+      unlockAudioEngine();
       if (activeTimer.exIndex === exIdx && activeTimer.intervalId) {
         stopTimer();
         renderSession();
@@ -1216,10 +1336,13 @@
 
       stopTimer();
       activeTimer.exIndex = exIdx;
+      activeTimer.targetEndTime = Date.now() + (appState.defaultTimer * 1000);
       activeTimer.remaining = appState.defaultTimer;
       
       activeTimer.intervalId = setInterval(() => {
-        activeTimer.remaining--;
+        const now = Date.now();
+        const diffSeconds = Math.round((activeTimer.targetEndTime - now) / 1000);
+        activeTimer.remaining = Math.max(0, diffSeconds);
         
         const displayEl = document.getElementById(`timer-display-${activeTimer.exIndex}`);
         if (displayEl) {
@@ -1227,11 +1350,10 @@
         }
 
         if (activeTimer.remaining <= 0) {
-          playBeep();
           stopTimer();
-          renderSession();
+          startContinuousAlarm();
         }
-      }, 1000);
+      }, 500);
 
       renderSession();
     }
@@ -1342,35 +1464,36 @@
       if (activeNavTab === 'settings') renderSettingsView();
     }
 
-    function switchLogSubView(sub) {
-      document.getElementById('log-subview-weekly').classList.toggle('hidden', sub !== 'weekly');
-      document.getElementById('log-subview-monthly').classList.toggle('hidden', sub !== 'monthly');
+    function switchLogMainMode(mode) {
+      logMainMode = mode;
+      const isHistory = mode === 'history';
+      document.getElementById('log-section-history').classList.toggle('hidden', !isHistory);
+      document.getElementById('log-section-charts').classList.toggle('hidden', isHistory);
 
-      const btnW = document.getElementById('btn-log-toggle-weekly');
-      const btnM = document.getElementById('btn-log-toggle-monthly');
-      if (sub === 'weekly') {
-        btnW.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
-        btnM.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+      const btnH = document.getElementById('btn-log-mode-history');
+      const btnC = document.getElementById('btn-log-mode-charts');
+      if (isHistory) {
+        btnH.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
+        btnC.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        renderWeeklyLog();
       } else {
-        btnW.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
-        btnM.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
+        btnH.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
+        btnC.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
+        renderChartsView();
       }
-      renderLogView();
     }
 
     function shiftWeek(dir) {
       currentWeekOffset += dir;
-      renderLogView();
-    }
-
-    function shiftMonth(dir) {
-      currentMonthOffset += dir;
-      renderLogView();
+      renderWeeklyLog();
     }
 
     function renderLogView() {
-      renderWeeklyLog();
-      renderMonthlyLog();
+      if (logMainMode === 'history') {
+        renderWeeklyLog();
+      } else {
+        renderChartsView();
+      }
     }
 
     function getStartOfWeek(date) {
@@ -1378,6 +1501,15 @@
       const day = d.getDay();
       const diff = d.getDate() - day + (day === 0 ? -6 : 1);
       return new Date(d.setDate(diff));
+    }
+
+    function toggleLogCardExpand(logId) {
+      if (expandedLogCards.has(logId)) {
+        expandedLogCards.delete(logId);
+      } else {
+        expandedLogCards.add(logId);
+      }
+      renderWeeklyLog();
     }
 
     function renderWeeklyLog() {
@@ -1422,104 +1554,304 @@
       }
 
       weekLogs.slice().reverse().forEach(log => {
+        const isExpanded = expandedLogCards.has(log.id);
         const dateObj = new Date(log.date);
-        const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
-        
-        let exDetails = '';
+
+        let totalSets = 0;
+        let sessionVol = 0;
         log.exercises.forEach(ex => {
-          const setsSummary = ex.sets.map(s => `${s.weight}${appState.unit} × ${s.reps}`).join(', ');
-          exDetails += `
-            <div class="text-xs">
-              <span class="font-bold text-slate-200">${ex.name}:</span>
-              <span class="text-slate-400 ml-1 font-mono">${setsSummary}</span>
-            </div>
-          `;
+          totalSets += ex.sets.length;
+          ex.sets.forEach(s => {
+            sessionVol += (parseFloat(s.weight) || 0) * (parseFloat(s.reps) || 0);
+          });
         });
 
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3 transition-all";
+
+        // Structured set-by-set breakdown table when expanded
+        let expandedHTML = '';
+        if (isExpanded) {
+          let exercisesTable = '';
+          log.exercises.forEach(ex => {
+            let setRows = '';
+            ex.sets.forEach((s, sIdx) => {
+              setRows += `
+                <div class="flex justify-between items-center py-1 text-xs border-b border-slate-800/40 last:border-b-0">
+                  <span class="text-slate-500 font-mono font-bold">Set ${sIdx + 1}</span>
+                  <span class="text-white font-mono font-black">${s.weight} ${appState.unit} × ${s.reps} reps</span>
+                </div>
+              `;
+            });
+
+            exercisesTable += `
+              <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 space-y-1">
+                <span class="text-xs font-black text-brand-400 block">${ex.name}</span>
+                <div class="space-y-0.5 pt-1">
+                  ${setRows}
+                </div>
+              </div>
+            `;
+          });
+
+          expandedHTML = `
+            <div class="pt-2 space-y-2 border-t border-slate-800/80">
+              ${exercisesTable}
+            </div>
+          `;
+        }
+
         card.innerHTML = `
-          <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
-            <div>
+          <div class="flex items-center justify-between">
+            <div class="cursor-pointer flex-1" onclick="toggleLogCardExpand('${log.id}')">
               <h4 class="font-black text-sm text-white">${log.routineName}</h4>
               <span class="text-[10px] text-slate-500 font-medium">${dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
             </div>
-            <span class="text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-lg border border-brand-500/20">${log.exercises.length} Exercises</span>
+            
+            <div class="flex items-center gap-2">
+              <button onclick="confirmDeleteWorkout('${log.id}')" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-red-400 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 active:scale-95 transition-all">
+                Delete
+              </button>
+              <button onclick="toggleLogCardExpand('${log.id}')" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold">
+                ${isExpanded ? '▲' : '▼'}
+              </button>
+            </div>
           </div>
-          <div class="space-y-1.5 pt-1">
-            ${exDetails}
+
+          <!-- Compact Metrics Overview -->
+          <div class="flex items-center gap-2 text-[10px] font-bold cursor-pointer" onclick="toggleLogCardExpand('${log.id}')">
+            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-brand-400">${sessionVol.toLocaleString()} ${appState.unit}</span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300">${totalSets} Sets</span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-400">${log.exercises.length} Exercises</span>
           </div>
+
+          ${expandedHTML}
         `;
         list.appendChild(card);
       });
     }
 
-    function renderMonthlyLog() {
-      const now = new Date();
-      now.setMonth(now.getMonth() + currentMonthOffset);
-      const year = now.getFullYear();
-      const month = now.getMonth();
+    function confirmDeleteWorkout(logId) {
+      const target = appState.logs.find(l => l.id === logId);
+      const name = target ? target.routineName : "Workout";
+      showConfirm("Delete Workout?", `Are you sure you want to remove this ${name} session from your history?`, () => {
+        appState.logs = appState.logs.filter(l => l.id !== logId);
+        saveState();
+        renderWeeklyLog();
+      });
+    }
 
-      document.getElementById('log-month-title').innerText = now.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    function renderChartsView() {
+      populateExerciseDropdown();
+      renderExerciseProgressionChart();
+      renderMacroVolumeBreakdown();
+    }
 
-      const firstDayIndex = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+    function populateExerciseDropdown() {
+      const select = document.getElementById('chart-exercise-select');
+      const currentVal = select.value;
+      
+      const trackedExercises = new Set();
+      appState.presets.forEach(p => p.exercises.forEach(e => trackedExercises.add(e.name)));
+      appState.logs.forEach(l => l.exercises.forEach(e => trackedExercises.add(e.name)));
 
-      const loggedDays = new Set();
-      let monthWorkoutsCount = 0;
-      const routineCounts = {};
+      select.innerHTML = '';
+      Array.from(trackedExercises).sort().forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.innerText = name;
+        select.appendChild(opt);
+      });
 
-      appState.logs.forEach(l => {
-        const d = new Date(l.date);
-        if (d.getFullYear() === year && d.getMonth() === month) {
-          loggedDays.add(d.getDate());
-          monthWorkoutsCount++;
-          routineCounts[l.routineName] = (routineCounts[l.routineName] || 0) + 1;
+      if (currentVal && trackedExercises.has(currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    function renderExerciseProgressionChart() {
+      const select = document.getElementById('chart-exercise-select');
+      const exerciseName = select.value;
+      const container = document.getElementById('chart-svg-container');
+      if (!exerciseName) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-8">Select an exercise above.</p>`;
+        return;
+      }
+
+      // Collect historical sessions for this exercise in chronological order
+      const dataPoints = [];
+      appState.logs.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(l => {
+        const ex = l.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
+        if (ex && ex.sets.length > 0) {
+          let maxW = 0;
+          let bestR = 0;
+          ex.sets.forEach(s => {
+            const w = parseFloat(s.weight) || 0;
+            const r = parseFloat(s.reps) || 0;
+            if (w > maxW) {
+              maxW = w;
+              bestR = r;
+            }
+          });
+          if (maxW > 0) {
+            dataPoints.push({
+              date: new Date(l.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+              weight: maxW,
+              reps: bestR
+            });
+          }
         }
       });
 
-      document.getElementById('monthly-count-summary').innerText = `${monthWorkoutsCount} sessions`;
-
-      const grid = document.getElementById('monthly-calendar-grid');
-      grid.innerHTML = '';
-
-      for (let i = 0; i < firstDayIndex; i++) {
-        const empty = document.createElement('div');
-        empty.className = "h-8 rounded-lg bg-transparent";
-        grid.appendChild(empty);
+      if (dataPoints.length < 2) {
+        container.innerHTML = `
+          <div class="py-8 px-4 text-center rounded-2xl bg-slate-950/70 border border-dashed border-slate-800 space-y-2">
+            <span class="text-2xl">📈</span>
+            <h4 class="text-xs font-bold text-slate-300">Keep Lifting, Dawg!</h4>
+            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Log at least 2 sessions of ${exerciseName} to generate your progressive overload strength curve.</p>
+          </div>
+        `;
+        return;
       }
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement('div');
-        const hasLogged = loggedDays.has(day);
-        const bg = hasLogged ? 'bg-brand-500 text-slate-950 font-black shadow-md shadow-brand-500/20' : 'bg-slate-950 text-slate-400 font-medium';
-        cell.className = `h-8 rounded-lg flex items-center justify-center text-xs ${bg}`;
-        cell.innerText = day;
-        grid.appendChild(cell);
-      }
+      // SVG Dimensions
+      const width = 360;
+      const height = 170;
+      const padL = 40;
+      const padR = 25;
+      const padT = 25;
+      const padB = 30;
 
-      const routineStatsContainer = document.getElementById('monthly-routine-stats');
-      routineStatsContainer.innerHTML = '';
+      const weights = dataPoints.map(d => d.weight);
+      const minW = Math.max(0, Math.floor(Math.min(...weights) * 0.85));
+      const maxW = Math.ceil(Math.max(...weights) * 1.12);
 
-      if (monthWorkoutsCount === 0) {
-        routineStatsContainer.innerHTML = `<span class="text-xs text-slate-500">No workout records in this month.</span>`;
-      } else {
-        Object.keys(routineCounts).forEach(rName => {
-          const count = routineCounts[rName];
-          const pct = Math.round((count / monthWorkoutsCount) * 100);
-          const row = document.createElement('div');
-          row.className = "space-y-1";
-          row.innerHTML = `
-            <div class="flex justify-between text-xs">
-              <span class="font-bold text-slate-300">${rName}</span>
-              <span class="text-slate-500">${count} (${pct}%)</span>
-            </div>
-            <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
-              <div class="bg-brand-500 h-full rounded-full" style="width: ${pct}%"></div>
-            </div>
+      const getX = (idx) => padL + (idx / (dataPoints.length - 1)) * (width - padL - padR);
+      const getY = (val) => height - padB - ((val - minW) / (maxW - minW || 1)) * (height - padT - padB);
+
+      let polylinePoints = '';
+      let circles = '';
+      let labels = '';
+
+      dataPoints.forEach((d, idx) => {
+        const x = getX(idx);
+        const y = getY(d.weight);
+        polylinePoints += `${x},${y} `;
+        
+        circles += `
+          <circle cx="${x}" cy="${y}" r="4.5" fill="#10b981" stroke="#020617" stroke-width="2" class="cursor-pointer"/>
+          <text x="${x}" y="${y - 8}" font-size="9" font-weight="900" fill="#34d399" text-anchor="middle">${d.weight}</text>
+        `;
+
+        if (idx === 0 || idx === dataPoints.length - 1 || idx === Math.floor(dataPoints.length / 2)) {
+          labels += `
+            <text x="${x}" y="${height - 10}" font-size="9" font-weight="700" fill="#64748b" text-anchor="middle">${d.date}</text>
           `;
-          routineStatsContainer.appendChild(row);
+        }
+      });
+
+      // Shaded area polygon
+      const firstX = getX(0);
+      const lastX = getX(dataPoints.length - 1);
+      const baseFloorY = height - padB;
+      const areaPoints = `${firstX},${baseFloorY} ${polylinePoints} ${lastX},${baseFloorY}`;
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto select-none overflow-visible">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Horizontal Grid Guides -->
+          <line x1="${padL}" y1="${padT}" x2="${width - padR}" y2="${padT}" stroke="#1e293b" stroke-dasharray="3,3" />
+          <line x1="${padL}" y1="${(padT + baseFloorY)/2}" x2="${width - padR}" y2="${(padT + baseFloorY)/2}" stroke="#1e293b" stroke-dasharray="3,3" />
+          <line x1="${padL}" y1="${baseFloorY}" x2="${width - padR}" y2="${baseFloorY}" stroke="#334155" />
+
+          <!-- Axis Labels -->
+          <text x="${padL - 6}" y="${padT + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${maxW}</text>
+          <text x="${padL - 6}" y="${baseFloorY + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${minW}</text>
+
+          <!-- Gradient Area -->
+          <polygon points="${areaPoints}" fill="url(#chartGrad)" />
+
+          <!-- Smooth Overload Curve -->
+          <polyline fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polylinePoints}" />
+
+          <!-- Interactive Dots & Numbers -->
+          ${circles}
+          ${labels}
+        </svg>
+      `;
+    }
+
+    function renderMacroVolumeBreakdown() {
+      const container = document.getElementById('macro-volume-bars');
+      const badge = document.getElementById('chart-total-sets-badge');
+      container.innerHTML = '';
+
+      const muscleCounts = {
+        'Chest': 0,
+        'Back & Lats': 0,
+        'Shoulders / Delts': 0,
+        'Arms (Biceps/Triceps)': 0,
+        'Quads & Glutes': 0,
+        'Hamstrings': 0,
+        'Core / Abs': 0
+      };
+
+      let totalSetsLogged = 0;
+
+      appState.logs.forEach(l => {
+        l.exercises.forEach(ex => {
+          const name = ex.name.toLowerCase();
+          const setCount = ex.sets.length;
+          totalSetsLogged += setCount;
+
+          if (name.includes('press') || name.includes('fly') || name.includes('chest')) {
+            if (name.includes('shoulder')) muscleCounts['Shoulders / Delts'] += setCount;
+            else muscleCounts['Chest'] += setCount;
+          } else if (name.includes('row') || name.includes('lat') || name.includes('superman') || name.includes('pull')) {
+            muscleCounts['Back & Lats'] += setCount;
+          } else if (name.includes('lateral') || name.includes('delt') || name.includes('shoulder')) {
+            muscleCounts['Shoulders / Delts'] += setCount;
+          } else if (name.includes('curl') || name.includes('triceps') || name.includes('arm')) {
+            muscleCounts['Arms (Biceps/Triceps)'] += setCount;
+          } else if (name.includes('squat') || name.includes('lunge') || name.includes('step-up') || name.includes('thrust')) {
+            muscleCounts['Quads & Glutes'] += setCount;
+          } else if (name.includes('deadlift') || name.includes('rdl') || name.includes('leg curl') || name.includes('hamstring')) {
+            muscleCounts['Hamstrings'] += setCount;
+          } else if (name.includes('calf')) {
+            muscleCounts['Quads & Glutes'] += setCount;
+          } else {
+            muscleCounts['Core / Abs'] += setCount;
+          }
         });
+      });
+
+      badge.innerText = `${totalSetsLogged} Sets Logged`;
+
+      if (totalSetsLogged === 0) {
+        container.innerHTML = `<span class="text-xs text-slate-500">Log workouts to view macro volume balance.</span>`;
+        return;
       }
+
+      Object.entries(muscleCounts).forEach(([muscle, count]) => {
+        const pct = Math.round((count / totalSetsLogged) * 100);
+        const row = document.createElement('div');
+        row.className = "space-y-1";
+        row.innerHTML = `
+          <div class="flex justify-between text-xs">
+            <span class="font-bold text-slate-300">${muscle}</span>
+            <span class="text-slate-400 font-mono font-bold">${count} sets (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+            <div class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
     }
 
     function renderSettingsView() {
@@ -1572,7 +1904,6 @@
         renderDashboard();
         renderSettingsView();
         renderLogView();
-        showBanterToast('hype');
       });
     }
 
@@ -1581,11 +1912,9 @@
         appState.logs = [];
         saveState();
         renderLogView();
-        showBanterToast('hype');
       });
     }
 
-    // Initialize application upon window load
     window.onload = initApp;
   </script>
 </body>
