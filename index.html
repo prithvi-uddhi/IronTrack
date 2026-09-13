@@ -74,10 +74,10 @@
     }
     @keyframes pulseAlarm {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.65; transform: scale(1.03); }
+      50% { opacity: 0.7; transform: scale(1.02); }
     }
     .alarm-pulsing {
-      animation: pulseAlarm 0.8s ease-in-out infinite;
+      animation: pulseAlarm 0.7s ease-in-out infinite;
     }
     @keyframes modalSlideIn {
       0% { transform: scale(0.92) translateY(20px); opacity: 0; }
@@ -89,6 +89,18 @@
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- Universal Floating Alarm Stop Banner (Appears whenever timer finishes ringing) -->
+  <div id="floating-alarm-banner" onclick="dismissAlarm()" class="fixed top-4 left-4 right-4 z-[95] cursor-pointer bg-red-600 hover:bg-red-500 text-white font-black py-3.5 px-5 rounded-2xl shadow-2xl flex items-center justify-between alarm-pulsing border border-red-400 hidden">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl animate-bounce">🔔</span>
+      <div>
+        <h4 class="text-xs font-black tracking-wider uppercase text-red-100">Rest Over</h4>
+        <p class="text-sm font-black text-white">Tap here to stop alarm</p>
+      </div>
+    </div>
+    <span class="text-xs bg-white text-red-600 px-3.5 py-1.5 rounded-full font-black uppercase shadow">STOP</span>
+  </div>
 
   <!-- 1. First-Launch Onboarding Modal -->
   <div id="modal-onboarding" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-3xl flex items-center justify-center p-6 hidden">
@@ -126,7 +138,7 @@
     </div>
   </div>
 
-  <!-- 3. Full-Screen Motivational Coach Modal (Glanceable, Notch-Safe) -->
+  <!-- 3. Full-Screen Motivational Coach Modal -->
   <div id="modal-coach" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-sm text-center space-y-6 transform scale-95 transition-transform duration-200" id="modal-coach-box">
       <div id="coach-pill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border bg-brand-500/10 border-brand-500/30 text-brand-400">
@@ -195,9 +207,7 @@
         </div>
         <div class="space-y-2 pt-1">
           <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Exercises</label>
-          <div id="new-split-exercise-list" class="space-y-2">
-            <!-- Exercise items inserted here -->
-          </div>
+          <div id="new-split-exercise-list" class="space-y-2"></div>
           <div class="flex gap-2 pt-1">
             <input type="text" id="input-add-exercise-name" placeholder="Exercise name..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-brand-500">
             <button onclick="appendExerciseRow()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-400 font-bold text-xs">+ Add</button>
@@ -235,9 +245,7 @@
         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Workout Splits</span>
         <span id="split-count-badge" class="text-[10px] font-bold text-slate-500">4 available</span>
       </div>
-      <div class="grid grid-cols-2 gap-3" id="dashboard-routines">
-        <!-- Split Tiles injected dynamically -->
-      </div>
+      <div class="grid grid-cols-2 gap-3" id="dashboard-routines"></div>
     </div>
   </main>
 
@@ -261,9 +269,7 @@
       </button>
     </header>
 
-    <div class="flex-1 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4" id="session-exercises">
-      <!-- Exercise cards with inline timers and live set counts injected here -->
-    </div>
+    <div class="flex-1 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4" id="session-exercises"></div>
   </main>
 
   <!-- ========================================== -->
@@ -295,28 +301,37 @@
         <button onclick="shiftWeek(1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">›</button>
       </div>
 
-      <div id="weekly-sessions-list" class="space-y-3">
-        <!-- Collapsible session cards rendered here -->
-      </div>
+      <div id="weekly-sessions-list" class="space-y-3"></div>
     </div>
 
     <!-- CONTAINER B: CHARTS & PROGRESSION ANALYTICS SUBVIEW -->
-    <div id="log-section-charts" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-5 hidden">
-      <!-- Tier 1: Micro Lift Overload Progression (SVG Interactive Curve) -->
+    <div id="log-section-charts" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4 hidden">
+      
+      <!-- Top Dropdown: Select Workout / Split -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-2 shadow-md">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Workout Filter</span>
+          <span class="text-[10px] text-slate-500 font-bold">Step 1</span>
+        </div>
+        <select id="chart-workout-select" onchange="onChartWorkoutSelectChange()" class="w-full bg-slate-950 border border-slate-800 text-sm font-bold text-white rounded-2xl px-3.5 py-3 focus:outline-none focus:border-brand-500">
+          <option value="" disabled selected>Select workout</option>
+          <!-- Injected dynamically with all routines + "All Workouts" -->
+        </select>
+      </div>
+
+      <!-- Tier 1: Micro Lift Overload Progression Curve -->
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
         <div class="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
           <div>
-            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Micro Progression</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Step 2 • Micro Progression</span>
             <h3 class="text-sm font-black text-white">Lift Progression Curve</h3>
           </div>
-          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="bg-slate-950 border border-slate-800 text-xs font-bold text-white rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-brand-500 max-w-[160px] truncate">
-            <!-- Populated dynamically with all tracked exercises -->
+          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="bg-slate-950 border border-slate-800 text-xs font-bold text-white rounded-xl px-2.5 py-2 focus:outline-none focus:border-brand-500 max-w-[160px] truncate">
+            <option value="" disabled selected>Select exercise</option>
           </select>
         </div>
 
-        <div id="chart-svg-container" class="w-full relative pt-1">
-          <!-- Dynamic SVG Line Chart rendered here -->
-        </div>
+        <div id="chart-svg-container" class="w-full relative pt-1"></div>
       </div>
 
       <!-- Tier 2: Macro Muscle Group Volume Distribution -->
@@ -329,9 +344,7 @@
           <span id="chart-total-sets-badge" class="text-[10px] font-bold text-slate-400 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">0 Sets Logged</span>
         </div>
 
-        <div id="macro-volume-bars" class="space-y-3 pt-1">
-          <!-- Muscle group distribution bars rendered here -->
-        </div>
+        <div id="macro-volume-bars" class="space-y-3 pt-1"></div>
       </div>
     </div>
   </main>
@@ -389,9 +402,7 @@
           <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Manage Workout Splits</span>
           <button onclick="openNewSplitModal()" class="text-xs font-bold text-brand-400">+ New Split</button>
         </div>
-        <div id="settings-routines-list" class="space-y-2">
-          <!-- Populated dynamically with delete buttons -->
-        </div>
+        <div id="settings-routines-list" class="space-y-2"></div>
       </div>
 
       <!-- Backup, Restore, and Reset Actions -->
@@ -542,12 +553,12 @@
     };
 
     let activeNavTab = "workout";
-    let logMainMode = "history"; // "history" or "charts"
+    let logMainMode = "history";
     let activeSession = null;
     let wakeLock = null;
     let expandedLogCards = new Set();
 
-    // High-Reliability Timestamp Timer & Continuous Alarm State
+    // Robust Timer & Alarm State
     let activeTimer = {
       exIndex: null,
       targetEndTime: null,
@@ -572,7 +583,7 @@
           audioCtx.resume();
         }
       } catch (e) {
-        console.warn("Audio unlock note:", e);
+        console.warn("Audio note:", e);
       }
     }
 
@@ -582,7 +593,6 @@
       try {
         const now = audioCtx.currentTime;
         
-        // Tone 1: High crisp chirp
         const osc1 = audioCtx.createOscillator();
         const gain1 = audioCtx.createGain();
         osc1.type = 'sine';
@@ -595,7 +605,6 @@
         osc1.start(now);
         osc1.stop(now + 0.15);
 
-        // Tone 2: Affirming harmonic chime 120ms later
         const osc2 = audioCtx.createOscillator();
         const gain2 = audioCtx.createGain();
         osc2.type = 'triangle';
@@ -625,15 +634,25 @@
         playBeepCadence();
       }, 1400);
 
-      renderSession();
+      const banner = document.getElementById('floating-alarm-banner');
+      if (banner) banner.classList.remove('hidden');
+
+      if (activeSession) renderSession();
     }
 
     function dismissAlarm() {
       activeTimer.isRinging = false;
-      if (activeTimer.ringLoopInterval) clearInterval(activeTimer.ringLoopInterval);
-      activeTimer.ringLoopInterval = null;
+      if (activeTimer.ringLoopInterval) {
+        clearInterval(activeTimer.ringLoopInterval);
+        activeTimer.ringLoopInterval = null;
+      }
+      
+      const banner = document.getElementById('floating-alarm-banner');
+      if (banner) banner.classList.add('hidden');
+
       stopTimer();
-      renderSession();
+      activeTimer.exIndex = null;
+      if (activeSession) renderSession();
     }
 
     function initApp() {
@@ -775,7 +794,7 @@
             renderLogView();
           }
         } catch (err) {
-          console.error("Failed to parse backup JSON", err);
+          console.error("Backup JSON parse failed", err);
         }
       };
       reader.readAsText(file);
@@ -908,7 +927,7 @@
         try {
           wakeLock = await navigator.wakeLock.request('screen');
           wakeLock.addEventListener('release', () => { wakeLock = null; });
-        } catch (err) { /* silent fail */ }
+        } catch (err) {}
       }
     }
     
@@ -935,7 +954,7 @@
           <div class="col-span-full py-12 px-6 rounded-3xl bg-slate-900 border border-dashed border-slate-800 text-center space-y-3">
             <span class="text-3xl">📋</span>
             <h4 class="font-black text-white text-base">No Splits Available</h4>
-            <p class="text-xs text-slate-400 max-w-xs mx-auto">All routines have been removed. Tap "+ New Split" in the top bar or restore defaults in Settings.</p>
+            <p class="text-xs text-slate-400 max-w-xs mx-auto">Tap "+ New Split" to add your favorite split.</p>
           </div>
         `;
         return;
@@ -994,7 +1013,6 @@
           const baseW = hist ? hist.bestSet.weight : '';
           const baseR = hist ? hist.bestSet.reps : '';
           
-          // Adaptive sets: Baseline is 3, or adjusts to previous workout volume
           const initialSetCount = hist ? Math.min(Math.max(hist.totalSetsLogged, 2), 6) : 3;
           const initialSets = [];
           for (let s = 0; s < initialSetCount; s++) {
@@ -1132,14 +1150,13 @@
           `;
         });
 
-        // Timer State & Ringing Logic
         const isTimerActiveHere = activeTimer.exIndex === exIdx && activeTimer.intervalId !== null;
-        const isRingingHere = activeTimer.exIndex === exIdx && activeTimer.isRinging;
+        const isRingingHere = activeTimer.isRinging && activeTimer.exIndex === exIdx;
 
         let timerDisplayHTML = '';
         if (isRingingHere) {
           timerDisplayHTML = `
-            <button onclick="dismissAlarm()" class="alarm-pulsing flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500 text-white font-black text-xs shadow-lg shadow-red-500/30 active:scale-95 transition-transform">
+            <button onclick="dismissAlarm()" class="alarm-pulsing flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-500 text-white font-black text-xs shadow-lg shadow-red-500/40 active:scale-95 transition-transform">
               <span>🔔 TIME UP — TAP TO STOP</span>
             </button>
           `;
@@ -1168,7 +1185,6 @@
                 <span class="text-[10px] text-slate-500 font-medium">• ${histText}</span>
               </div>
             </div>
-            <!-- Dynamic Set Counter Badge -->
             <div class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-300">
               <span class="text-brand-400">${completedCount}</span> / ${totalCount} SETS
             </div>
@@ -1178,7 +1194,6 @@
             ${setsHTML}
           </div>
 
-          <!-- Bottom Action Bar: + Add Set | Inline Timer | Remove Set -->
           <div class="pt-3 flex items-center justify-between border-t border-slate-800/60">
             <button onclick="addSet(${exIdx})" class="text-xs font-bold text-brand-400 active:scale-95 py-1 px-1">
               + Add Set
@@ -1210,7 +1225,6 @@
         return;
       }
 
-      // Approach B: Auto-adopt ghost values if left blank (1-tap fast logging)
       if ((set.weight === '' || set.weight === undefined) && set.ghostW !== '') set.weight = set.ghostW;
       if ((set.reps === '' || set.reps === undefined) && set.ghostR !== '') set.reps = set.ghostR;
       
@@ -1219,7 +1233,6 @@
 
       set.completed = true;
 
-      // Propagate ghost suggestions to upcoming sets
       for (let i = setIdx + 1; i < ex.sets.length; i++) {
         if (!ex.sets[i].completed) {
           ex.sets[i].ghostW = set.weight;
@@ -1248,7 +1261,7 @@
             "NEW PR UNLOCKED",
             "🚀",
             "LIGHT WEIGHT BABY!",
-            `You shattered your previous mark of ${hW} ${appState.unit} × ${hR}. Keep this ruthless momentum going!`,
+            `You shattered your previous mark of ${hW} ${appState.unit} × ${hR}. Ruthless progression!`,
             "Lock In & Keep Cooking →",
             "bg-brand-500/10 border-brand-500/30 text-brand-400",
             "bg-brand-500 hover:bg-brand-400 text-slate-950 shadow-brand-500/25"
@@ -1257,13 +1270,13 @@
         }
       }
 
-      // 2. High Impact: Final Set Countdown (Penultimate completion)
+      // 2. High Impact: Final Set Countdown
       if (setsRemaining === 1) {
         showCoachModal(
           "FINAL SET ALERT",
           "🔥",
           "EMPTY THE TANK!",
-          `Just 1 set left on ${ex.name}. Your perceived failure point is only at ~70% of true capacity. Give it everything!`,
+          `Just 1 set left on ${ex.name}. True muscular failure is way beyond mental hesitation. Finish strong!`,
           `Lock In For Set ${totalCountOr(totalSets)} →`,
           "bg-amber-500/10 border-amber-500/30 text-amber-400",
           "bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/25"
@@ -1271,7 +1284,7 @@
         return;
       }
 
-      // 3. High Impact: Plateau Accountability Check
+      // 3. High Impact: Plateau Check
       if (ex.history) {
         const hW = parseFloat(ex.history.weight) || 0;
         const hR = parseFloat(ex.history.reps) || 0;
@@ -1322,14 +1335,20 @@
     function stopTimer() {
       if (activeTimer.intervalId) clearInterval(activeTimer.intervalId);
       activeTimer.intervalId = null;
-      activeTimer.exIndex = null;
       activeTimer.targetEndTime = null;
     }
 
     function toggleTimer(exIdx) {
       unlockAudioEngine();
+
+      if (activeTimer.isRinging) {
+        dismissAlarm();
+        return;
+      }
+
       if (activeTimer.exIndex === exIdx && activeTimer.intervalId) {
         stopTimer();
+        activeTimer.exIndex = null;
         renderSession();
         return;
       }
@@ -1569,7 +1588,6 @@
         const card = document.createElement('div');
         card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3 transition-all";
 
-        // Structured set-by-set breakdown table when expanded
         let expandedHTML = '';
         if (isExpanded) {
           let exercisesTable = '';
@@ -1618,7 +1636,6 @@
             </div>
           </div>
 
-          <!-- Compact Metrics Overview -->
           <div class="flex items-center gap-2 text-[10px] font-bold cursor-pointer" onclick="toggleLogCardExpand('${log.id}')">
             <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-brand-400">${sessionVol.toLocaleString()} ${appState.unit}</span>
             <span class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300">${totalSets} Sets</span>
@@ -1641,43 +1658,114 @@
       });
     }
 
+    // ==========================================
+    // CHARTS VIEW CONTROLLERS
+    // ==========================================
+    let selectedWorkoutFilter = "";
+
     function renderChartsView() {
+      populateWorkoutDropdown();
       populateExerciseDropdown();
       renderExerciseProgressionChart();
       renderMacroVolumeBreakdown();
     }
 
-    function populateExerciseDropdown() {
-      const select = document.getElementById('chart-exercise-select');
-      const currentVal = select.value;
-      
-      const trackedExercises = new Set();
-      appState.presets.forEach(p => p.exercises.forEach(e => trackedExercises.add(e.name)));
-      appState.logs.forEach(l => l.exercises.forEach(e => trackedExercises.add(e.name)));
+    function populateWorkoutDropdown() {
+      const select = document.getElementById('chart-workout-select');
+      const currentVal = select.value || selectedWorkoutFilter;
 
       select.innerHTML = '';
-      Array.from(trackedExercises).sort().forEach(name => {
+      
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = "";
+      defaultOpt.disabled = true;
+      defaultOpt.innerText = "Select workout";
+      if (!currentVal) defaultOpt.selected = true;
+      select.appendChild(defaultOpt);
+
+      const allOpt = document.createElement('option');
+      allOpt.value = "all";
+      allOpt.innerText = "All Workouts";
+      if (currentVal === "all") allOpt.selected = true;
+      select.appendChild(allOpt);
+
+      appState.presets.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.innerText = p.name;
+        if (currentVal === p.id) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function onChartWorkoutSelectChange() {
+      const select = document.getElementById('chart-workout-select');
+      selectedWorkoutFilter = select.value;
+      populateExerciseDropdown();
+      renderExerciseProgressionChart();
+    }
+
+    function populateExerciseDropdown() {
+      const select = document.getElementById('chart-exercise-select');
+      const currentExVal = select.value;
+      select.innerHTML = '';
+
+      let candidateExercises = new Set();
+
+      if (!selectedWorkoutFilter || selectedWorkoutFilter === "all") {
+        appState.presets.forEach(p => p.exercises.forEach(e => candidateExercises.add(e.name)));
+        appState.logs.forEach(l => l.exercises.forEach(e => candidateExercises.add(e.name)));
+      } else {
+        const foundPreset = appState.presets.find(p => p.id === selectedWorkoutFilter);
+        if (foundPreset) {
+          foundPreset.exercises.forEach(e => candidateExercises.add(e.name));
+        }
+        appState.logs.filter(l => l.routineId === selectedWorkoutFilter).forEach(l => {
+          l.exercises.forEach(e => candidateExercises.add(e.name));
+        });
+      }
+
+      const sortedList = Array.from(candidateExercises).sort();
+
+      if (sortedList.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = "";
+        opt.disabled = true;
+        opt.selected = true;
+        opt.innerText = "No movements found";
+        select.appendChild(opt);
+        return;
+      }
+
+      sortedList.forEach((name, idx) => {
         const opt = document.createElement('option');
         opt.value = name;
         opt.innerText = name;
+        if (currentExVal && currentExVal === name) {
+          opt.selected = true;
+        } else if (!currentExVal && idx === 0) {
+          opt.selected = true;
+        }
         select.appendChild(opt);
       });
-
-      if (currentVal && trackedExercises.has(currentVal)) {
-        select.value = currentVal;
-      }
     }
 
     function renderExerciseProgressionChart() {
       const select = document.getElementById('chart-exercise-select');
       const exerciseName = select.value;
       const container = document.getElementById('chart-svg-container');
+
       if (!exerciseName) {
-        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-8">Select an exercise above.</p>`;
+        container.innerHTML = `
+          <div class="py-8 px-4 text-center rounded-2xl bg-slate-950/70 border border-dashed border-slate-800 space-y-2">
+            <span class="text-2xl">📋</span>
+            <h4 class="text-xs font-bold text-slate-300">Select an Exercise</h4>
+            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Choose a workout and an exercise above to visualize your strength overload.</p>
+          </div>
+        `;
         return;
       }
 
-      // Collect historical sessions for this exercise in chronological order
       const dataPoints = [];
       appState.logs.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(l => {
         const ex = l.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
@@ -1707,13 +1795,12 @@
           <div class="py-8 px-4 text-center rounded-2xl bg-slate-950/70 border border-dashed border-slate-800 space-y-2">
             <span class="text-2xl">📈</span>
             <h4 class="text-xs font-bold text-slate-300">Keep Lifting, Dawg!</h4>
-            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Log at least 2 sessions of ${exerciseName} to generate your progressive overload strength curve.</p>
+            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Log at least 2 sessions of ${exerciseName} to generate your progressive overload curve.</p>
           </div>
         `;
         return;
       }
 
-      // SVG Dimensions
       const width = 360;
       const height = 170;
       const padL = 40;
@@ -1749,7 +1836,6 @@
         }
       });
 
-      // Shaded area polygon
       const firstX = getX(0);
       const lastX = getX(dataPoints.length - 1);
       const baseFloorY = height - padB;
@@ -1764,22 +1850,16 @@
             </linearGradient>
           </defs>
 
-          <!-- Horizontal Grid Guides -->
           <line x1="${padL}" y1="${padT}" x2="${width - padR}" y2="${padT}" stroke="#1e293b" stroke-dasharray="3,3" />
           <line x1="${padL}" y1="${(padT + baseFloorY)/2}" x2="${width - padR}" y2="${(padT + baseFloorY)/2}" stroke="#1e293b" stroke-dasharray="3,3" />
           <line x1="${padL}" y1="${baseFloorY}" x2="${width - padR}" y2="${baseFloorY}" stroke="#334155" />
 
-          <!-- Axis Labels -->
           <text x="${padL - 6}" y="${padT + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${maxW}</text>
           <text x="${padL - 6}" y="${baseFloorY + 3}" font-size="9" font-weight="700" fill="#64748b" text-anchor="end">${minW}</text>
 
-          <!-- Gradient Area -->
           <polygon points="${areaPoints}" fill="url(#chartGrad)" />
-
-          <!-- Smooth Overload Curve -->
           <polyline fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polylinePoints}" />
 
-          <!-- Interactive Dots & Numbers -->
           ${circles}
           ${labels}
         </svg>
