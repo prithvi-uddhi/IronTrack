@@ -226,6 +226,88 @@
     </div>
   </div>
 
+  <!-- 6. Edit Existing Split Modal -->
+  <div id="modal-edit-split" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="bg-slate-900 border-t sm:border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 space-y-4 max-h-[85vh] flex flex-col shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="font-black text-lg text-white">Edit Split</h3>
+          <p class="text-xs text-slate-400">Add, remove or modify routine movements</p>
+        </div>
+        <button onclick="closeEditSplitModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">✕</button>
+      </div>
+      
+      <div class="space-y-3 overflow-y-auto hide-scrollbar flex-1 pr-1">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Routine Name</label>
+          <input type="text" id="input-edit-split-name" placeholder="Routine Name" 
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Target Focus</label>
+          <input type="text" id="input-edit-split-target" placeholder="e.g. Chest / Triceps" 
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div class="space-y-2 pt-1">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Exercises</label>
+          <div id="edit-split-exercise-list" class="space-y-2"></div>
+          <div class="flex gap-2 pt-1">
+            <input type="text" id="input-edit-split-add-name" placeholder="Add exercise name..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-brand-500">
+            <button onclick="appendEditSplitExerciseRow()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-brand-400 font-bold text-xs">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-2 border-t border-slate-800">
+        <button onclick="closeEditSplitModal()" class="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold text-sm">Cancel</button>
+        <button onclick="saveEditedSplit()" class="flex-1 py-3 rounded-xl bg-brand-500 text-slate-950 font-black text-sm shadow-lg shadow-brand-500/20">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. In-Session Add Exercise Modal -->
+  <div id="modal-add-session-ex" class="fixed inset-0 z-[95] bg-black/75 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-3xl p-5 space-y-4 shadow-2xl">
+      <div class="space-y-1 text-center">
+        <h3 class="font-black text-lg text-white">Add Movement</h3>
+        <p class="text-xs text-slate-400">Append an extra exercise to today's session</p>
+      </div>
+      <div class="space-y-2">
+        <input type="text" id="input-session-new-ex-name" placeholder="e.g. Cable Facepulls" 
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-brand-500">
+        <input type="text" id="input-session-new-ex-target" placeholder="Target focus (optional)" 
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-300 focus:outline-none focus:border-brand-500">
+      </div>
+      <div class="flex gap-2.5 pt-1">
+        <button onclick="closeAddSessionExModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">Cancel</button>
+        <button onclick="submitAddSessionExercise()" class="flex-1 py-2.5 rounded-xl bg-brand-500 text-slate-950 font-black text-xs shadow-md shadow-brand-500/20">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Finish Workout Permanent Split Update Prompt Modal -->
+  <div id="modal-split-sync-prompt" class="fixed inset-0 z-[98] bg-black/80 backdrop-blur-md flex items-center justify-center p-5 hidden">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-6 space-y-5 shadow-2xl text-center">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-2xl text-brand-400">
+        🔄
+      </div>
+      <div class="space-y-2">
+        <h3 class="font-black text-lg text-white tracking-tight">Routine Movements Changed</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          You added or removed movements during this workout. Would you like to update <span id="prompt-sync-split-name" class="font-bold text-slate-200">this routine</span> permanently for future sessions?
+        </p>
+      </div>
+      <div class="space-y-2 pt-1">
+        <button onclick="resolveSplitSync(true)" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-500/20 active:scale-95 transition-all">
+          Save To Split Permanently
+        </button>
+        <button onclick="resolveSplitSync(false)" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs tracking-wider active:scale-95 transition-all">
+          Keep Just For Today
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================== -->
   <!-- 1. VIEW: WORKOUT (DASHBOARD)               -->
   <!-- ========================================== -->
@@ -275,197 +357,6 @@
 
     <div class="flex-1 overflow-y-auto hide-scrollbar p-4 safe-pb space-y-4" id="session-exercises"></div>
   </main>
-
-  <!-- ========================================== -->
-  <!-- 2. VIEW: LOG / HISTORY & CHARTS            -->
-  <!-- ========================================== -->
-  <main id="view-log" class="flex-1 flex flex-col h-full w-full max-w-xl mx-auto hidden overflow-hidden">
-    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 space-y-3 flex-shrink-0">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-black tracking-tight text-white">Workout Log</h1>
-          <p class="text-xs text-slate-400 font-medium">History & Progressive Overload</p>
-        </div>
-        <!-- Master Sub-Toggle: History vs Charts -->
-        <div class="flex bg-slate-900 border border-slate-800 p-1 rounded-xl text-xs font-bold">
-          <button id="btn-log-mode-history" onclick="switchLogMainMode('history')" class="px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all">History</button>
-          <button id="btn-log-mode-charts" onclick="switchLogMainMode('charts')" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all">Charts</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- CONTAINER A: HISTORY SUBVIEW -->
-    <div id="log-section-history" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4">
-      <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-2xl">
-        <button onclick="shiftWeek(-1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">‹</button>
-        <div class="text-center">
-          <span id="log-week-range" class="text-xs font-black text-white block">This Week</span>
-          <span id="log-week-stats" class="text-[10px] text-brand-400 font-bold">0 Workouts • 0 kg volume</span>
-        </div>
-        <button onclick="shiftWeek(1)" class="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 font-bold active:scale-95">›</button>
-      </div>
-
-      <div id="weekly-sessions-list" class="space-y-3"></div>
-    </div>
-
-    <!-- CONTAINER B: CHARTS & PROGRESSION ANALYTICS SUBVIEW -->
-    <div id="log-section-charts" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4 hidden">
-      
-      <!-- Tier 1: Micro Lift Overload Progression Curve -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
-        <div class="border-b border-slate-800/80 pb-3">
-          <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Micro Progression</span>
-          <h3 class="text-base font-black text-white tracking-tight">Lift Progression Curve</h3>
-        </div>
-
-        <!-- Full-Width Exercise Dropdown (No cut-offs) -->
-        <div class="space-y-1.5 pt-1">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Select Exercise</label>
-          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="w-full bg-slate-950 border border-slate-800 text-xs sm:text-sm font-bold text-white rounded-2xl px-3.5 py-3 focus:outline-none focus:border-brand-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_14px_center] bg-no-repeat pr-8">
-            <option value="" disabled selected>Select exercise</option>
-          </select>
-        </div>
-
-        <div id="chart-svg-container" class="w-full relative pt-2"></div>
-      </div>
-
-      <!-- Tier 2: Macro Muscle Group Volume Distribution -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
-        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-          <div>
-            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Macro Balance</span>
-            <h3 class="text-sm font-black text-white">Muscle Group Volume</h3>
-          </div>
-          <span id="chart-total-sets-badge" class="text-[10px] font-bold text-slate-400 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">0 Sets Logged</span>
-        </div>
-
-        <div id="macro-volume-bars" class="space-y-3 pt-1"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ========================================== -->
-  <!-- 3. VIEW: SETTINGS                          -->
-  <!-- ========================================== -->
-  <main id="view-settings" class="flex-1 flex flex-col min-h-0 w-full max-w-xl mx-auto hidden">
-    <header class="px-5 pt-5 pb-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md z-10 flex-shrink-0">
-      <h1 class="text-xl font-black tracking-tight text-white">Settings</h1>
-      <p class="text-xs text-slate-400 font-medium">Locker room & data controls</p>
-    </header>
-
-    <div class="flex-1 overflow-y-auto -webkit-overflow-scrolling-touch p-5 safe-pb space-y-5">
-      <!-- Profile Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Profile & Preferences</span>
-        
-        <div class="space-y-1">
-          <label class="text-[11px] font-medium text-slate-400">Lifter Nickname</label>
-          <div class="flex gap-2">
-            <input type="text" id="settings-name-input" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-brand-500">
-            <button onclick="updateNickname()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-xs font-bold text-brand-400">Save</button>
-          </div>
-        </div>
-
-        <!-- Weight Units -->
-        <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
-          <div>
-            <span class="text-xs font-bold text-white block">Unit Preference</span>
-            <span class="text-[10px] text-slate-500">Select weight standard</span>
-          </div>
-          <div class="flex bg-slate-950 border border-slate-800 p-1 rounded-xl text-xs font-bold">
-            <button id="btn-unit-kg" onclick="setWeightUnit('kg')" class="px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black">KG</button>
-            <button id="btn-unit-lbs" onclick="setWeightUnit('lbs')" class="px-3 py-1 rounded-lg text-slate-400">LBS</button>
-          </div>
-        </div>
-
-        <!-- Gym Bro Banter Toggle -->
-        <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
-          <div class="pr-3">
-            <span class="text-xs font-bold text-white block">Coach Mentality</span>
-            <span class="text-[10px] text-slate-400 leading-tight block">PR alerts, final-set urgency & plateau checks</span>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-            <input type="checkbox" id="toggle-banter" onchange="toggleBanterSetting(this.checked)" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
-          </label>
-        </div>
-      </div>
-
-      <!-- Split Management -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Manage Workout Splits</span>
-          <button onclick="openNewSplitModal()" class="text-xs font-bold text-brand-400">+ New Split</button>
-        </div>
-        <div id="settings-routines-list" class="space-y-2"></div>
-      </div>
-
-      <!-- Backup, Restore, and Reset Actions -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Data Safety (Local Storage)</span>
-        <p class="text-[11px] text-slate-400">Everything is stored safely inside your browser. Export backups so you never lose your progress.</p>
-        
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="exportDataJSON()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700/50 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 active:scale-95">
-            <span>💾 Export JSON</span>
-          </button>
-          <button onclick="exportDataCSV()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700/50 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 active:scale-95">
-            <span>📊 Export CSV</span>
-          </button>
-        </div>
-
-        <div class="pt-2">
-          <label class="w-full py-2.5 px-3 rounded-xl bg-slate-950 border border-dashed border-slate-700 hover:border-brand-500 text-xs font-bold text-slate-300 flex items-center justify-center gap-2 cursor-pointer transition-colors">
-            <span>📥 Restore Backup (JSON)</span>
-            <input type="file" id="file-import-input" accept=".json" onchange="importDataJSON(event)" class="hidden">
-          </label>
-        </div>
-
-        <div class="pt-2 border-t border-slate-800/60 space-y-2">
-          <button onclick="confirmResetToOriginal()" class="w-full text-left text-xs font-bold text-red-400 hover:text-red-300 py-1.5 flex items-center justify-between active:scale-95 transition-transform">
-            <span>🔄 Reset App to Original State</span>
-            <span class="text-[10px] text-slate-500 font-normal">Restores default 4 splits</span>
-          </button>
-          <button onclick="confirmClearAllData()" class="w-full text-left text-xs font-bold text-slate-400 hover:text-red-400 py-1.5 flex items-center justify-between active:scale-95 transition-transform">
-            <span>🗑️ Wipe Workout History Only</span>
-            <span class="text-[10px] text-slate-500 font-normal">Preserves all splits</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ========================================== -->
-  <!-- DEDICATED BOTTOM NAVIGATION BAR            -->
-  <!-- ========================================== -->
-  <nav id="app-bottom-nav" class="flex-shrink-0 w-full z-40 bg-slate-900/95 border-t border-slate-800/80 backdrop-blur-xl shadow-[0_-8px_25px_rgba(0,0,0,0.5)] nav-safe-bottom">
-    <div class="max-w-xl mx-auto flex items-center justify-around px-2 pt-1.5">
-      <!-- Workout Tab -->
-      <button id="nav-tab-workout" onclick="switchNavTab('workout')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-brand-400 active:scale-95 transition-transform">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 8v8m18-8v8M7 6v12M17 6v12M7 12h10" />
-        </svg>
-        <span class="text-[10px] font-black tracking-wider uppercase">Workout</span>
-      </button>
-
-      <!-- Log Tab -->
-      <button id="nav-tab-log" onclick="switchNavTab('log')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 active:scale-95 transition-transform">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span class="text-[10px] font-black tracking-wider uppercase">Log</span>
-      </button>
-
-      <!-- Settings Tab -->
-      <button id="nav-tab-settings" onclick="switchNavTab('settings')" class="flex-1 py-1.5 flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 active:scale-95 transition-transform">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span class="text-[10px] font-black tracking-wider uppercase">Settings</span>
-      </button>
-    </div>
-  </nav>
 
   <script>
     const DEFAULT_PRESETS = [
@@ -966,15 +857,20 @@
         const subtitle = p.subtitle || p.target || (p.exercises && p.exercises.length > 0 ? p.exercises.slice(0, 3).map(e => e.target || e.name).join(' / ') : 'Tap to start session');
         const exerciseCountText = `${p.exercises.length} EXERCISES`;
 
-        const tile = document.createElement('button');
+        const tile = document.createElement('div');
         tile.onclick = () => startSession(p);
-        tile.className = `p-3.5 sm:p-5 rounded-3xl bg-gradient-to-br ${p.color || 'from-slate-900 to-slate-950'} border ${p.border || 'border-slate-800'} flex flex-col justify-between text-left min-h-[145px] sm:min-h-[155px] relative overflow-hidden group shadow-lg active:scale-95 transition-all`;
+        tile.className = `p-3.5 sm:p-5 rounded-3xl bg-gradient-to-br ${p.color || 'from-slate-900 to-slate-950'} border ${p.border || 'border-slate-800'} flex flex-col justify-between text-left min-h-[145px] sm:min-h-[155px] relative overflow-hidden group shadow-lg active:scale-[0.98] transition-all cursor-pointer`;
         tile.innerHTML = `
           <div class="flex items-start justify-between w-full">
             <span class="text-2xl sm:text-3xl drop-shadow-md">${p.icon || '🏋️'}</span>
-            <span class="text-[9px] sm:text-[11px] font-black uppercase tracking-wider px-2 sm:px-2.5 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-slate-200 flex-shrink-0">
-              ${exerciseCountText}
-            </span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[9px] sm:text-[11px] font-black uppercase tracking-wider px-2 sm:px-2.5 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-slate-200 flex-shrink-0">
+                ${exerciseCountText}
+              </span>
+              <button onclick="event.stopPropagation(); openEditSplitModal('${p.id}')" title="Edit Split Movements" class="p-1 sm:p-1.5 rounded-full bg-slate-950/80 border border-slate-800 text-slate-400 hover:text-brand-400 active:scale-90 transition-transform">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+            </div>
           </div>
           <div class="space-y-1 mt-2">
             <h3 class="font-black text-white text-sm sm:text-base leading-snug tracking-tight">${p.name}</h3>
@@ -1076,6 +972,7 @@
       const validExercises = activeSession.exercises.map(ex => {
         return {
           name: ex.name,
+          target: ex.target || 'General',
           sets: ex.sets.filter(s => s.completed).map(s => ({ weight: s.weight, reps: s.reps }))
         };
       }).filter(ex => ex.sets.length > 0);
@@ -1085,6 +982,51 @@
         return;
       }
 
+      // Check if movements were added or removed compared to the original split preset
+      const originalPreset = appState.presets.find(p => p.id === activeSession.routineId);
+      if (originalPreset) {
+        const origNames = originalPreset.exercises.map(e => e.name.trim().toLowerCase());
+        const currentNames = activeSession.exercises.map(e => e.name.trim().toLowerCase());
+        const hasDifferences = origNames.length !== currentNames.length || !origNames.every((n, i) => n === currentNames[i]);
+
+        if (hasDifferences) {
+          document.getElementById('prompt-sync-split-name').innerText = `"${originalPreset.name}"`;
+          const modal = document.getElementById('modal-split-sync-prompt');
+          modal.classList.remove('hidden');
+          return;
+        }
+      }
+
+      finalizeSaveSession(validExercises);
+    }
+
+    function resolveSplitSync(updatePermanently) {
+      document.getElementById('modal-split-sync-prompt').classList.add('hidden');
+      if (updatePermanently && activeSession) {
+        const originalPreset = appState.presets.find(p => p.id === activeSession.routineId);
+        if (originalPreset) {
+          originalPreset.exercises = activeSession.exercises.map(e => ({
+            name: e.name,
+            target: e.target || 'General'
+          }));
+          saveState();
+          renderDashboard();
+          if (activeNavTab === 'settings') renderSettingsView();
+        }
+      }
+
+      const validExercises = activeSession.exercises.map(ex => {
+        return {
+          name: ex.name,
+          target: ex.target || 'General',
+          sets: ex.sets.filter(s => s.completed).map(s => ({ weight: s.weight, reps: s.reps }))
+        };
+      }).filter(ex => ex.sets.length > 0);
+
+      finalizeSaveSession(validExercises);
+    }
+
+    function finalizeSaveSession(validExercises) {
       appState.logs.push({
         id: 'log_' + Date.now(),
         date: new Date().toISOString(),
@@ -1112,7 +1054,7 @@
 
       activeSession.exercises.forEach((ex, exIdx) => {
         const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-sm space-y-3";
+        card.className = "bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-sm space-y-3 relative";
         
         let histText = ex.history ? `Last: ${ex.history.weight} ${appState.unit} × ${ex.history.reps}` : `First time tracking`;
         
@@ -1178,16 +1120,22 @@
           `;
         }
 
+        const safeExName = ex.name.replace(/'/g, "\\'");
         card.innerHTML = `
           <div class="flex items-start justify-between">
-            <div>
-              <h3 class="font-black text-base text-white tracking-tight">${ex.name}</h3>
+            <div class="flex-1 pr-2">
+              <div class="flex items-center gap-2">
+                <h3 class="font-black text-base text-white tracking-tight">${ex.name}</h3>
+                <button onclick="removeExerciseFromSession(${exIdx}, '${safeExName}')" title="Remove movement from today's workout" class="text-slate-600 hover:text-red-400 text-xs px-1 py-0.5 rounded transition-colors">
+                  ✕
+                </button>
+              </div>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-[9px] uppercase font-bold text-brand-400 tracking-wider bg-brand-500/10 px-1.5 py-0.5 rounded">${ex.target}</span>
                 <span class="text-[10px] text-slate-500 font-medium">• ${histText}</span>
               </div>
             </div>
-            <div class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-300">
+            <div class="px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-300 flex-shrink-0">
               <span class="text-brand-400">${completedCount}</span> / ${totalCount} SETS
             </div>
           </div>
@@ -1210,39 +1158,71 @@
         `;
         container.appendChild(card);
       });
+
+      // Bottom Button to add a new movement on-the-fly during active workout
+      const addMovementRow = document.createElement('div');
+      addMovementRow.className = "pt-2 pb-6";
+      addMovementRow.innerHTML = `
+        <button onclick="openAddSessionExModal()" class="w-full py-3.5 rounded-2xl bg-slate-900 border border-dashed border-slate-800 hover:border-brand-500/50 text-brand-400 hover:text-brand-300 font-black text-xs uppercase tracking-wider active:scale-98 transition-all flex items-center justify-center gap-2">
+          <span class="text-base font-bold">+</span>
+          <span>Add Movement to Workout</span>
+        </button>
+      `;
+      container.appendChild(addMovementRow);
     }
 
-    function updateSet(exIdx, setIdx, field, val) {
-      activeSession.exercises[exIdx].sets[setIdx][field] = val;
-    }
-
-    function toggleSet(exIdx, setIdx) {
-      unlockAudioEngine();
-      const ex = activeSession.exercises[exIdx];
-      const set = ex.sets[setIdx];
-
-      if (set.completed) {
-        set.completed = false;
-        renderSession();
+    function removeExerciseFromSession(exIdx, exName) {
+      if (activeSession.exercises.length <= 1) {
+        showConfirm("Cannot Remove", "A session must have at least one exercise.", () => {});
         return;
       }
-
-      if ((set.weight === '' || set.weight === undefined) && set.ghostW !== '') set.weight = set.ghostW;
-      if ((set.reps === '' || set.reps === undefined) && set.ghostR !== '') set.reps = set.ghostR;
-      
-      if (set.weight === '' || set.weight === undefined) set.weight = '10';
-      if (set.reps === '' || set.reps === undefined) set.reps = '10';
-
-      set.completed = true;
-
-      for (let i = setIdx + 1; i < ex.sets.length; i++) {
-        if (!ex.sets[i].completed) {
-          ex.sets[i].ghostW = set.weight;
-          ex.sets[i].ghostR = set.reps;
+      showConfirm("Remove Exercise?", `Remove "${exName}" from today's workout?`, () => {
+        if (activeTimer.exIndex === exIdx) {
+          dismissAlarm();
+        } else if (activeTimer.exIndex > exIdx) {
+          activeTimer.exIndex--;
         }
+        activeSession.exercises.splice(exIdx, 1);
+        renderSession();
+      });
+    }
+
+    function openAddSessionExModal() {
+      document.getElementById('input-session-new-ex-name').value = '';
+      document.getElementById('input-session-new-ex-target').value = '';
+      document.getElementById('modal-add-session-ex').classList.remove('hidden');
+      setTimeout(() => document.getElementById('input-session-new-ex-name').focus(), 150);
+    }
+
+    function closeAddSessionExModal() {
+      document.getElementById('modal-add-session-ex').classList.add('hidden');
+    }
+
+    function submitAddSessionExercise() {
+      const nameInput = document.getElementById('input-session-new-ex-name');
+      const targetInput = document.getElementById('input-session-new-ex-target');
+      const name = nameInput.value.trim();
+      const target = targetInput.value.trim() || 'General';
+
+      if (!name) return;
+
+      const hist = getHistory(name);
+      const baseW = hist ? hist.bestSet.weight : '';
+      const baseR = hist ? hist.bestSet.reps : '';
+      const initialSetCount = hist ? Math.min(Math.max(hist.totalSetsLogged, 2), 6) : 3;
+      const initialSets = [];
+      for (let s = 0; s < initialSetCount; s++) {
+        initialSets.push({ weight: '', reps: '', ghostW: baseW, ghostR: baseR, completed: false });
       }
 
-      evalCoachTriggers(ex, set, exIdx);
+      activeSession.exercises.push({
+        name: name,
+        target: target,
+        history: hist ? hist.bestSet : null,
+        sets: initialSets
+      });
+
+      closeAddSessionExModal();
       renderSession();
     }
 
@@ -1485,23 +1465,92 @@
       if (activeNavTab === 'settings') renderSettingsView();
     }
 
-    function switchLogMainMode(mode) {
-      logMainMode = mode;
-      const isHistory = mode === 'history';
-      document.getElementById('log-section-history').classList.toggle('hidden', !isHistory);
-      document.getElementById('log-section-charts').classList.toggle('hidden', isHistory);
+    let editingSplitId = null;
+    let editingSplitExercises = [];
 
-      const btnH = document.getElementById('btn-log-mode-history');
-      const btnC = document.getElementById('btn-log-mode-charts');
-      if (isHistory) {
-        btnH.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
-        btnC.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
-        renderWeeklyLog();
-      } else {
-        btnH.className = "px-3 py-1 rounded-lg text-slate-400 hover:text-white transition-all";
-        btnC.className = "px-3 py-1 rounded-lg bg-brand-500 text-slate-950 font-black transition-all";
-        renderChartsView();
+    function openEditSplitModal(splitId) {
+      const preset = appState.presets.find(p => p.id === splitId);
+      if (!preset) return;
+
+      editingSplitId = splitId;
+      editingSplitExercises = JSON.parse(JSON.stringify(preset.exercises || []));
+      
+      document.getElementById('input-edit-split-name').value = preset.name || '';
+      document.getElementById('input-edit-split-target').value = preset.subtitle || preset.target || '';
+      document.getElementById('input-edit-split-add-name').value = '';
+      
+      renderEditSplitExerciseList();
+      document.getElementById('modal-edit-split').classList.remove('hidden');
+    }
+
+    function closeEditSplitModal() {
+      document.getElementById('modal-edit-split').classList.add('hidden');
+      editingSplitId = null;
+      editingSplitExercises = [];
+    }
+
+    function renderEditSplitExerciseList() {
+      const list = document.getElementById('edit-split-exercise-list');
+      list.innerHTML = '';
+      if (editingSplitExercises.length === 0) {
+        list.innerHTML = `
+          <div class="text-xs text-slate-500 text-center py-4 border border-dashed border-slate-800 rounded-xl">
+            No movements in this split. Type below and tap + Add.
+          </div>
+        `;
+        return;
       }
+      editingSplitExercises.forEach((ex, idx) => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white";
+        item.innerHTML = `
+          <div class="flex items-center gap-2 truncate pr-2">
+            <span class="text-slate-500 text-[10px] font-mono">${idx+1}.</span>
+            <span class="truncate">${ex.name}</span>
+          </div>
+          <button onclick="removeEditSplitExercise(${idx})" class="text-slate-500 hover:text-red-400 px-1 py-0.5 rounded transition-colors flex-shrink-0">✕</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function appendEditSplitExerciseRow() {
+      const input = document.getElementById('input-edit-split-add-name');
+      const name = input.value.trim();
+      if (!name) return;
+      const target = document.getElementById('input-edit-split-target').value.trim() || 'General';
+      editingSplitExercises.push({ name, target });
+      input.value = '';
+      renderEditSplitExerciseList();
+    }
+
+    function removeEditSplitExercise(idx) {
+      editingSplitExercises.splice(idx, 1);
+      renderEditSplitExerciseList();
+    }
+
+    function saveEditedSplit() {
+      if (!editingSplitId) return;
+      const preset = appState.presets.find(p => p.id === editingSplitId);
+      if (!preset) return;
+
+      const newName = document.getElementById('input-edit-split-name').value.trim();
+      const newTarget = document.getElementById('input-edit-split-target').value.trim();
+
+      if (!newName) return;
+      if (editingSplitExercises.length === 0) {
+        showConfirm("Split Needs Exercises", "Please add at least one exercise to this split.", () => {});
+        return;
+      }
+
+      preset.name = newName;
+      preset.subtitle = newTarget || preset.subtitle;
+      preset.exercises = editingSplitExercises;
+
+      saveState();
+      closeEditSplitModal();
+      renderDashboard();
+      if (activeNavTab === 'settings') renderSettingsView();
     }
 
     function shiftWeek(dir) {
@@ -1909,9 +1958,14 @@
             <span class="font-bold text-white block">${p.name}</span>
             <span class="text-[10px] text-slate-500">${p.exercises.length} Exercises</span>
           </div>
-          <button onclick="confirmDeletePreset('${p.id}', '${safeName}')" class="text-xs text-red-400 hover:text-red-300 font-bold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 active:scale-95 transition-all">
-            Delete
-          </button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openEditSplitModal('${p.id}')" class="text-xs text-slate-300 hover:text-white font-bold px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 active:scale-95 transition-all">
+              Edit
+            </button>
+            <button onclick="confirmDeletePreset('${p.id}', '${safeName}')" class="text-xs text-red-400 hover:text-red-300 font-bold px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 active:scale-95 transition-all">
+              Delete
+            </button>
+          </div>
         `;
         list.appendChild(item);
       });
