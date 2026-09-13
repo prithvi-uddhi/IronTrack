@@ -90,16 +90,20 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- Universal Floating Alarm Stop Banner (Appears whenever timer finishes ringing) -->
-  <div id="floating-alarm-banner" onclick="dismissAlarm()" class="fixed top-4 left-4 right-4 z-[95] cursor-pointer bg-red-600 hover:bg-red-500 text-white font-black py-3.5 px-5 rounded-2xl shadow-2xl flex items-center justify-between alarm-pulsing border border-red-400 hidden">
-    <div class="flex items-center gap-3">
-      <span class="text-2xl animate-bounce">🔔</span>
-      <div>
-        <h4 class="text-xs font-black tracking-wider uppercase text-red-100">Rest Over</h4>
-        <p class="text-sm font-black text-white">Tap here to stop alarm</p>
+  <!-- Centered Frosted Rest Over Alarm Modal (Replaces top banner) -->
+  <div id="modal-timer-alarm" onclick="dismissAlarm()" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-200">
+    <div onclick="event.stopPropagation()" class="bg-slate-900 border border-slate-700/80 w-full max-w-xs rounded-3xl p-6 text-center space-y-5 shadow-2xl alarm-pulsing">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-3xl">
+        🔔
       </div>
+      <div class="space-y-1">
+        <h3 class="text-xl font-black text-white tracking-tight uppercase">Rest Over</h3>
+        <p class="text-xs text-slate-400 font-medium">Time to lock in for the next set!</p>
+      </div>
+      <button onclick="dismissAlarm()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-red-600/30 transition-all">
+        Stop Alarm
+      </button>
     </div>
-    <span class="text-xs bg-white text-red-600 px-3.5 py-1.5 rounded-full font-black uppercase shadow">STOP</span>
   </div>
 
   <!-- 1. First-Launch Onboarding Modal -->
@@ -307,31 +311,22 @@
     <!-- CONTAINER B: CHARTS & PROGRESSION ANALYTICS SUBVIEW -->
     <div id="log-section-charts" class="flex-1 overflow-y-auto hide-scrollbar p-5 safe-pb space-y-4 hidden">
       
-      <!-- Top Dropdown: Select Workout / Split -->
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-2 shadow-md">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Workout Filter</span>
-          <span class="text-[10px] text-slate-500 font-bold">Step 1</span>
-        </div>
-        <select id="chart-workout-select" onchange="onChartWorkoutSelectChange()" class="w-full bg-slate-950 border border-slate-800 text-sm font-bold text-white rounded-2xl px-3.5 py-3 focus:outline-none focus:border-brand-500">
-          <option value="" disabled selected>Select workout</option>
-          <!-- Injected dynamically with all routines + "All Workouts" -->
-        </select>
-      </div>
-
       <!-- Tier 1: Micro Lift Overload Progression Curve -->
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-lg">
-        <div class="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
-          <div>
-            <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Step 2 • Micro Progression</span>
-            <h3 class="text-sm font-black text-white">Lift Progression Curve</h3>
-          </div>
-          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="bg-slate-950 border border-slate-800 text-xs font-bold text-white rounded-xl px-2.5 py-2 focus:outline-none focus:border-brand-500 max-w-[160px] truncate">
+        <div class="border-b border-slate-800/80 pb-3">
+          <span class="text-[10px] font-black uppercase tracking-wider text-brand-400">Micro Progression</span>
+          <h3 class="text-base font-black text-white tracking-tight">Lift Progression Curve</h3>
+        </div>
+
+        <!-- Full-Width Exercise Dropdown (No cut-offs) -->
+        <div class="space-y-1.5 pt-1">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Select Exercise</label>
+          <select id="chart-exercise-select" onchange="renderExerciseProgressionChart()" class="w-full bg-slate-950 border border-slate-800 text-xs sm:text-sm font-bold text-white rounded-2xl px-3.5 py-3 focus:outline-none focus:border-brand-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_14px_center] bg-no-repeat pr-8">
             <option value="" disabled selected>Select exercise</option>
           </select>
         </div>
 
-        <div id="chart-svg-container" class="w-full relative pt-1"></div>
+        <div id="chart-svg-container" class="w-full relative pt-2"></div>
       </div>
 
       <!-- Tier 2: Macro Muscle Group Volume Distribution -->
@@ -634,8 +629,12 @@
         playBeepCadence();
       }, 1400);
 
-      const banner = document.getElementById('floating-alarm-banner');
-      if (banner) banner.classList.remove('hidden');
+      const modal = document.getElementById('modal-timer-alarm');
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+      }
 
       if (activeSession) renderSession();
     }
@@ -647,8 +646,11 @@
         activeTimer.ringLoopInterval = null;
       }
       
-      const banner = document.getElementById('floating-alarm-banner');
-      if (banner) banner.classList.add('hidden');
+      const modal = document.getElementById('modal-timer-alarm');
+      if (modal) {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+      }
 
       stopTimer();
       activeTimer.exIndex = null;
@@ -1661,48 +1663,10 @@
     // ==========================================
     // CHARTS VIEW CONTROLLERS
     // ==========================================
-    let selectedWorkoutFilter = "";
-
     function renderChartsView() {
-      populateWorkoutDropdown();
       populateExerciseDropdown();
       renderExerciseProgressionChart();
       renderMacroVolumeBreakdown();
-    }
-
-    function populateWorkoutDropdown() {
-      const select = document.getElementById('chart-workout-select');
-      const currentVal = select.value || selectedWorkoutFilter;
-
-      select.innerHTML = '';
-      
-      const defaultOpt = document.createElement('option');
-      defaultOpt.value = "";
-      defaultOpt.disabled = true;
-      defaultOpt.innerText = "Select workout";
-      if (!currentVal) defaultOpt.selected = true;
-      select.appendChild(defaultOpt);
-
-      const allOpt = document.createElement('option');
-      allOpt.value = "all";
-      allOpt.innerText = "All Workouts";
-      if (currentVal === "all") allOpt.selected = true;
-      select.appendChild(allOpt);
-
-      appState.presets.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.innerText = p.name;
-        if (currentVal === p.id) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
-    function onChartWorkoutSelectChange() {
-      const select = document.getElementById('chart-workout-select');
-      selectedWorkoutFilter = select.value;
-      populateExerciseDropdown();
-      renderExerciseProgressionChart();
     }
 
     function populateExerciseDropdown() {
@@ -1711,19 +1675,8 @@
       select.innerHTML = '';
 
       let candidateExercises = new Set();
-
-      if (!selectedWorkoutFilter || selectedWorkoutFilter === "all") {
-        appState.presets.forEach(p => p.exercises.forEach(e => candidateExercises.add(e.name)));
-        appState.logs.forEach(l => l.exercises.forEach(e => candidateExercises.add(e.name)));
-      } else {
-        const foundPreset = appState.presets.find(p => p.id === selectedWorkoutFilter);
-        if (foundPreset) {
-          foundPreset.exercises.forEach(e => candidateExercises.add(e.name));
-        }
-        appState.logs.filter(l => l.routineId === selectedWorkoutFilter).forEach(l => {
-          l.exercises.forEach(e => candidateExercises.add(e.name));
-        });
-      }
+      appState.presets.forEach(p => p.exercises.forEach(e => candidateExercises.add(e.name)));
+      appState.logs.forEach(l => l.exercises.forEach(e => candidateExercises.add(e.name)));
 
       const sortedList = Array.from(candidateExercises).sort();
 
